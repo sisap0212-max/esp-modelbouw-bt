@@ -2,9 +2,9 @@
  "bord1": {
   "versies": [
    {
-    "v": "2.4",
-    "t": "Bluetooth",
-    "bestand": "bin/billboard_2.4.bin"
+    "v": "2.5",
+    "t": "Mooiere klok",
+    "bestand": "bin/billboard_2.5.bin"
    }
   ],
   "herstel": null
@@ -12,9 +12,9 @@
  "bord2": {
   "versies": [
    {
-    "v": "2.4",
-    "t": "Bluetooth",
-    "bestand": "bin/billboard_c3_2.4.bin"
+    "v": "2.5",
+    "t": "Mooiere klok",
+    "bestand": "bin/billboard_c3_2.5.bin"
    }
   ],
   "herstel": null
