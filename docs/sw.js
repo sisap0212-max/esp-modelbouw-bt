@@ -4,7 +4,7 @@ const KAST = 'billboard-v1';
 self.addEventListener('install', e => {
   e.waitUntil((async () => {
     const k = await caches.open(KAST);
-    await k.addAll(['./', 'versies.json']).catch(() => {});
+    await k.addAll(['./', 'bluetooth.html', 'manifest.webmanifest', 'versies.json']).catch(() => {});
     try {   // de nieuwste software per bordje alvast bewaren
       const l = await (await fetch('versies.json', { cache: 'no-store' })).json();
       const best = [];
