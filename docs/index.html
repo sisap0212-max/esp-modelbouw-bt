@@ -43,19 +43,37 @@ footer{text-align:center;color:var(--zacht);font-size:12px;padding:24px 16px 32p
 <header><p class="naam">Mini-billboard</p><h1>Verbinden</h1></header>
 <main>
 
-<section><h2>Zo verbindt u</h2>
+<section id="metsite" style="display:none"><h2>Verbinden</h2>
+<div class="blok"><ol>
+<li><div>Zet het billboard aan.<small>Stekker erin. Op het scherm staat de naam van de wifi.</small></div></li>
+<li><div>Nieuw billboard? Kies op uw telefoon de wifi <b>Billboard-instellen</b>.<small>Staat het billboard al op uw thuis-wifi, dan blijft u gewoon op uw thuis-wifi.</small></div></li>
+<li><div>Tik hieronder op <b>Verbinden</b> en tik op <b>Toestaan</b> als de browser het vraagt.<small>De site zoekt het billboard dan zelf.</small></div></li>
+</ol></div>
+<button class="knop" id="verbind">Verbinden</button>
+<p id="zoekst" class="voet"></p>
+<div id="handblok" style="display:none">
+<div class="blok" style="margin-top:12px">
+<p>Billboard niet gevonden? Vul het adres in dat op het scherm van het billboard staat, bijvoorbeeld <b>192.168.1.37</b>.</p>
+<p><input id="handadres" placeholder="Adres van het billboard" inputmode="url" autocomplete="off" autocapitalize="off"></p>
+</div>
+<button class="knop tweede" id="handknop">Verbinden met dit adres</button>
+</div>
+<p class="voet">Zegt uw telefoon bij de wifi van het billboard "geen internet"? Kies dan "Verbonden blijven". Dat klopt: het billboard heeft zijn eigen wifi.</p>
+</section>
+
+<section id="zondersite"><h2>Zo verbindt u</h2>
 <div class="blok"><ol>
 <li><div>Zet het billboard aan.<small>Stekker erin. Op het scherm staat de naam van de wifi.</small></div></li>
 <li><div>Kies op uw telefoon de wifi van het billboard.<small>Instellingen → Wifi → bijvoorbeeld "Billboard". De eerste keer heet hij "Billboard-instellen" en is er geen wachtwoord.</small></div></li>
 <li><div>Tik hieronder op Open mijn billboard.<small>Vaak opent de pagina al vanzelf zodra u verbonden bent.</small></div></li>
 </ol></div>
 <a class="knop" id="open" href="http://192.168.4.1/">Open mijn billboard</a>
-<p class="voet">Zegt uw telefoon "geen internet"? Kies dan "Verbonden blijven". Dat klopt: het billboard heeft zijn eigen wifi.</p>
+<p class="voet" id="basismelding"><b>Billboard Basis (C3)?</b> Die bedient u alleen met <b>Chrome of Edge</b> op een Android-telefoon of een computer. Op een iPhone of iPad lukt dat niet.</p>
 </section>
 
-<section><h2>Billboard op uw thuis-wifi</h2>
+<section id="thuisdeel"><h2>Pagina in het billboard (S3 en 2,2-inch)</h2>
 <div class="blok">
-<p>Heeft u het billboard met uw thuis-wifi verbonden? Dan hoeft u niet van wifi te wisselen.</p>
+<p>Deze billboards hebben ook een eigen pagina. Thuis opent u die met de naam van het billboard.</p>
 <p><input id="naam" maxlength="20" placeholder="Naam van het billboard" value="Billboard" autocomplete="off" autocapitalize="off"></p>
 </div>
 <a class="knop tweede" id="thuis" href="http://billboard.local/">Open via thuis-wifi</a>
@@ -64,18 +82,19 @@ footer{text-align:center;color:var(--zacht);font-size:12px;padding:24px 16px 32p
 
 <section><h2>Tip</h2>
 <div class="blok">
-<p>Zet deze pagina op uw beginscherm. Dan werkt hij ook als uw telefoon geen internet heeft.</p>
+<p>Zet deze pagina op uw beginscherm. Dan werkt hij ook als uw telefoon geen internet heeft (bijvoorbeeld als hij met de wifi van het billboard verbonden is).</p>
 <ul>
-<li>iPhone: tik op Deel <span aria-hidden="true">⬆︎</span> en kies "Zet op beginscherm".</li>
 <li>Android: tik op de drie puntjes en kies "Toevoegen aan startscherm".</li>
+<li>iPhone: tik op Deel <span aria-hidden="true">⬆︎</span> en kies "Zet op beginscherm".</li>
 </ul>
 </div></section>
 
 <section><details><summary>Lukt het niet?</summary>
 <div class="blok"><ul>
 <li>Ziet u de wifi van het billboard niet? Haal de stekker eruit, wacht 5 seconden en doe hem er weer in.</li>
-<li>Opent de pagina niet? Typ in Safari of Chrome bovenin: <b>192.168.4.1</b></li>
-<li>Zet mobiele data even uit als de pagina blijft laden.</li>
+<li>Vraagt de browser of deze site apparaten op uw netwerk mag zoeken? Tik op <b>Toestaan</b>. Per ongeluk geweigerd? Tik links van het adres op het slotje en zet "Lokaal netwerk" op Toestaan.</li>
+<li>Het billboard staat op uw thuis-wifi? Dan moet uw telefoon op dezelfde wifi zitten (niet op 4G).</li>
+<li>Zet mobiele data even uit als het blijft zoeken.</li>
 <li>Wachtwoord vergeten? Doe 3 keer snel de stekker erin en eruit. Het billboard start dan in de herstelmodus; kies daar "Wachtwoord wissen". Uw foto's blijven staan.</li>
 </ul></div></details></section>
 
@@ -93,15 +112,58 @@ if(/[a-z0-9]/.test(c))h+=c;else if(h&&!h.endsWith('-'))h+='-';
 h=h.replace(/-+$/,'');
 return h||'billboard';
 }
+const lees=k=>{try{return localStorage.getItem(k)||'';}catch(e){return '';}};
+const zet=(k,w)=>{try{localStorage.setItem(k,w);}catch(e){}};
 const veld=document.getElementById('naam');
 function bijwerken(){
 const h=host(veld.value);
 document.getElementById('adres').textContent=h+'.local';
 document.getElementById('thuis').href='http://'+h+'.local/';
-try{localStorage.setItem('billboardnaam',veld.value);}catch(e){}
+zet('billboardnaam',veld.value);
 }
-try{const n=localStorage.getItem('billboardnaam');if(n)veld.value=n;}catch(e){}
+if(lees('billboardnaam'))veld.value=lees('billboardnaam');
 veld.oninput=bijwerken;bijwerken();
+
+// Mag deze browser vanaf de site met het billboard praten? (Chrome en Edge 145 en nieuwer: "Local Network Access")
+const LNA=(()=>{try{return new Request('http://192.168.4.1/',{targetAddressSpace:'local'}).targetAddressSpace==='local';}catch(e){return false;}})();
+if(LNA){document.getElementById('metsite').style.display='';document.getElementById('basismelding').style.display='none';
+document.querySelector('#zondersite h2').textContent='Of: pagina in het billboard (S3 en 2,2-inch)';}
+
+const st=document.getElementById('zoekst');
+// Eén adres proberen: antwoordt daar een billboard?
+async function probeer(adres,ms){
+try{
+const r=await fetch(adres+'/info',{targetAddressSpace:'local',cache:'no-store',signal:AbortSignal.timeout(ms)});
+if(!r.ok)return null;const d=await r.json();return d&&d.versie?d:null;
+}catch(e){return null;}
+}
+function ga(adres,d){
+zet('bb_adres',adres);
+location.href=d.modus==='instellen'?'instellen.html':d.modus==='herstel'?'herstel.html':'bedienen.html';
+}
+async function zoek(){
+const knop=document.getElementById('verbind');knop.disabled=true;
+let toestemming='';
+for(const n of ['local-network-access','local-network']){try{toestemming=(await navigator.permissions.query({name:n})).state;break;}catch(e){}}
+const plekken=[...new Set([lees('bb_adres'),lees('bb_thuis'),'http://'+host(veld.value)+'.local','http://192.168.4.1'].filter(Boolean))];
+let eerste=true;
+for(const a of plekken){
+st.textContent='Zoeken: '+a.replace('http://','')+' ...';
+// De eerste keer wacht de browser op uw "Toestaan": dan langer wachten
+const d=await probeer(a,eerste&&toestemming!=='granted'?30000:4000);eerste=false;
+if(d){st.textContent='Gevonden: '+d.naam;ga(a,d);return;}
+}
+st.textContent='Geen billboard gevonden. Staat het aan, en zit uw telefoon op dezelfde wifi?';
+document.getElementById('handblok').style.display='';knop.disabled=false;
+}
+document.getElementById('verbind').onclick=zoek;
+document.getElementById('handknop').onclick=async()=>{
+let a=document.getElementById('handadres').value.trim().replace(/\/+$/,'');
+if(!a)return;if(!/^https?:\/\//.test(a))a='http://'+a;
+st.textContent='Zoeken: '+a.replace('http://','')+' ...';
+const d=await probeer(a,8000);
+if(d)ga(a,d);else st.textContent='Op dit adres antwoordt geen billboard.';
+};
 if('serviceWorker' in navigator&&location.protocol==='https:'){navigator.serviceWorker.register('sw.js').catch(()=>{});}
 </script>
 </body></html>

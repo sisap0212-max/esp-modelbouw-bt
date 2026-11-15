@@ -1,10 +1,10 @@
 // Bewaart de bedienpagina en de software op de telefoon, zodat alles ook zonder internet werkt.
 // Met internet wordt altijd eerst de nieuwste versie gehaald.
-const KAST = 'billboard-v1';
+const KAST = 'billboard-v2';
 self.addEventListener('install', e => {
   e.waitUntil((async () => {
     const k = await caches.open(KAST);
-    await k.addAll(['./', 'bluetooth.html', 'manifest.webmanifest', 'versies.json']).catch(() => {});
+    await k.addAll(['./', 'bedienen.html', 'instellen.html', 'herstel.html', 'bluetooth.html', 'manifest.webmanifest']).catch(() => {});
     try {   // de nieuwste software per bordje alvast bewaren
       const l = await (await fetch('versies.json', { cache: 'no-store' })).json();
       const best = [];

@@ -1,0 +1,986 @@
+<!doctype html>
+<html lang="nl"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Billboard</title>
+<style>
+:root{--accent:#007aff;--bg:#f2f2f7;--kaart:#ffffff;--tekst:#000000;--zacht:#6d6d72;--rand:#e3e3e8;--veld:#f2f2f7;--knop2:#e9e9ee;--schakel-uit:#e3e3e8;--goed:#248a3d;--fout:#d70015;--balk:rgba(249,249,249,.94);--rond-kaart:12px;--rond-knop:10px;--letter:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,system-ui,sans-serif;}@media(prefers-color-scheme:dark){:root{--accent:#0a84ff;--bg:#000000;--kaart:#1c1c1e;--tekst:#ffffff;--zacht:#8e8e93;--rand:#38383a;--veld:#2c2c2e;--knop2:#2c2c2e;--schakel-uit:#39393d;--goed:#30d158;--fout:#ff453a;--balk:rgba(22,22,24,.94);}}*{box-sizing:border-box}html{-webkit-text-size-adjust:100%}body{margin:0;background:var(--bg);color:var(--tekst);font:17px/1.35 var(--letter);-webkit-font-smoothing:antialiased}main{max-width:640px;margin:0 auto;padding:0 16px 24px}header{max-width:640px;margin:0 auto;padding:14px 16px 4px}.naam{margin:0;font-size:15px;font-weight:600;color:var(--zacht)}h1{font-size:34px;line-height:1.15;font-weight:700;letter-spacing:.2px;margin:2px 0 6px}h2{font-size:13px;font-weight:400;text-transform:uppercase;letter-spacing:.3px;color:var(--zacht);margin:0 16px 7px}.kopregel{display:flex;align-items:flex-end;justify-content:space-between;margin:0 0 7px}.kopregel h2{margin-bottom:0}.kaart{margin:24px 0 0;scroll-margin-top:12px}.blok{background:var(--kaart);border-radius:var(--rond-kaart);padding:12px 16px;overflow:hidden}.blok>p:first-child{margin-top:2px}.blok>p:last-child{margin-bottom:2px}.blok+.blok{margin-top:12px}p{margin:10px 0}.voet{font-size:13px;color:var(--zacht);margin:7px 16px 0;line-height:1.35}small,.klein{color:var(--zacht);font-size:13px}a{color:var(--accent)}b{font-weight:600}button{font:inherit;font-size:17px;font-weight:600;background:var(--accent);color:#fff;border:0;border-radius:var(--rond-knop);padding:11px 18px;cursor:pointer;margin:3px 0;-webkit-tap-highlight-color:transparent}button:active{opacity:.7}button:disabled{opacity:.4;cursor:default}button.tweede{background:var(--knop2);color:var(--accent);font-weight:500}button.link{background:none;color:var(--accent);padding:0 16px;font-weight:400;margin:0}button.rood{background:none;color:var(--fout);font-weight:400;padding:6px 0}input,select,textarea{font:inherit;font-size:17px;color:var(--tekst);background:var(--veld);border:0;border-radius:var(--rond-knop);padding:10px 12px;max-width:100%;outline:0}input:focus,select:focus,textarea:focus{box-shadow:0 0 0 2px var(--accent)}input[type=text],input[type=password],textarea,select{width:100%}input[type=number]{width:5.5em;text-align:center}input[type=range]{width:100%;accent-color:var(--accent);padding:0;background:none}input[type=color]{width:48px;height:36px;padding:2px;vertical-align:middle}textarea{resize:vertical}::placeholder{color:var(--zacht);opacity:.8}input[type=checkbox]{-webkit-appearance:none;appearance:none;flex:none;width:51px;height:31px;border-radius:16px;background:var(--schakel-uit);position:relative;cursor:pointer;margin:0;padding:0;transition:background .2s;vertical-align:middle}input[type=checkbox]:before{content:"";position:absolute;top:2px;left:2px;width:27px;height:27px;border-radius:50%;background:#fff;box-shadow:0 2px 4px rgba(0,0,0,.2);transition:transform .2s}input[type=checkbox]:checked{background:#34c759}input[type=checkbox]:checked:before{transform:translateX(20px)}input[type=checkbox]:focus{box-shadow:none}label{cursor:pointer}label:has(>input[type=checkbox]){display:flex;align-items:center;justify-content:space-between;gap:12px}label>input[type=checkbox]{order:2}.bestand{display:block;color:var(--accent);cursor:pointer;position:relative}.bestand input{position:absolute;width:1px;height:1px;opacity:0;overflow:hidden}.bestand:focus-within{text-decoration:underline}.rg{padding:11px 0;border-bottom:.5px solid var(--rand)}.rg:first-child{padding-top:4px}.rg:last-child{border:0;padding-bottom:4px}.rg small{display:block;margin-top:4px}.rechts{display:flex;align-items:center;justify-content:space-between;gap:12px}.rg input[type=range]{margin:10px 0 2px}details{margin:10px 0}summary{cursor:pointer;color:var(--accent)}#status{font-size:15px;font-weight:500;margin:8px 0 2px}#status:empty{display:none}footer{text-align:center;color:var(--zacht);font-size:12px;padding:16px 16px 28px}
+/* Alleen voor deze pagina; de rest van het uiterlijk staat in huisstijl.css */
+body{padding-bottom:calc(64px + env(safe-area-inset-bottom))}
+.status p{margin:2px 0;font-size:14px;font-weight:600}
+.status p:empty{display:none}
+#tabs{position:fixed;left:0;right:0;bottom:0;z-index:6;display:flex;justify-content:center;background:var(--balk);-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);border-top:.5px solid var(--rand);padding:6px 4px calc(4px + env(safe-area-inset-bottom))}
+#tabs button{flex:1;max-width:160px;background:none;color:var(--zacht);border:0;border-radius:0;padding:2px 0;margin:0;font-size:10.5px;font-weight:500;line-height:1.2}
+#tabs svg{display:block;width:26px;height:26px;margin:0 auto 2px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+#tabs button.aan{color:var(--accent)}
+body[data-tab=fotos] .kaart:not([data-tab=fotos]),body[data-tab=dias] .kaart:not([data-tab=dias]),body[data-tab=inst] .kaart:not([data-tab=inst]),body[data-tab=beheer] .kaart:not([data-tab=beheer]){display:none}
+.kaart:first-child{margin-top:12px}
+/* Nu op het billboard */
+.nurij{display:flex;align-items:center;gap:14px}
+.titel{font-size:17px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.duim{flex:none;width:44px;height:44px;border-radius:7px;background:#8aa5b8 center/cover;display:flex;align-items:center;justify-content:center;overflow:hidden;font-size:8px;line-height:1.1;text-align:center;color:#fff;white-space:pre-wrap;padding:2px}
+.duim.groot{width:100px;height:75px;border-radius:9px;font-size:13px}
+/* Wat staat erop */
+.lijstblok{padding:0 0 0 16px}
+.r{display:flex;align-items:center;gap:12px}
+.r .tx .klein{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.r .tx{flex:1;min-width:0;padding:10px 16px 10px 0;min-height:60px;display:flex;flex-direction:column;justify-content:center}
+.r:not(:last-child) .tx{border-bottom:.5px solid var(--rand)}
+.r.uit .duim,.r.uit .titel{opacity:.4}
+.bed{display:none;align-items:center;gap:8px;flex-wrap:wrap;margin-top:6px}
+.wijzig .bed{display:flex}
+.bed label{gap:8px;font-size:15px;justify-content:flex-start}
+.bed label>input{order:0}
+.bed button{font-size:15px;padding:5px 11px;margin:0}
+.bed .rood{margin-left:auto}
+.leeg{padding:14px 16px 14px 0;color:var(--zacht)}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 10px}
+.chips button{background:var(--kaart);color:var(--tekst);border-radius:999px;padding:6px 14px;font-size:15px;font-weight:500;margin:0}
+.chips button.aan{background:var(--accent);color:#fff}
+.chips button.plus{color:var(--accent)}
+/* tekst-voorbeeld en video knippen */
+.tv{width:240px;max-width:100%;aspect-ratio:4/3;display:flex;align-items:center;justify-content:center;text-align:center;white-space:pre-wrap;overflow:hidden;padding:8px;font-size:20px;font-weight:bold;border-radius:10px;margin:8px 0;background:#000;color:#fff}
+.k{border-top:.5px solid var(--rand);padding:10px 0;margin:8px 0}
+.k video{width:100%;background:#000;display:block;border-radius:8px;margin:6px 0}
+#knop{width:100%}
+</style></head><body data-tab="fotos">
+<header>
+<p class="naam" id="kop">Billboard</p>
+<h1 id="titel">Foto's</h1>
+<div class="status"><p id="bovenstatus"></p><p id="updboven"></p></div>
+</header>
+<main>
+<section class="kaart" id="nu" data-tab="fotos">
+<h2>Nu op het billboard</h2>
+<div class="blok nurij"><div class="duim groot" id="nubeeld"></div><div><div class="titel" id="nunaam">Even laden...</div><div class="klein" id="nuinfo"></div></div></div>
+</section>
+<section class="kaart" id="toevoegen" data-tab="fotos">
+<div class="blok">
+<label class="bestand">Foto's of video's toevoegen<input type="file" id="kies" accept="image/*,video/*,.heic,.heif" multiple></label>
+<p class="klein" id="gekozen"></p>
+<div id="knip"></div>
+<p id="knopblok" style="display:none"><button id="knop">Op het billboard zetten</button></p>
+<p id="status"></p>
+</div>
+<p class="voet">Foto's worden vanzelf passend gemaakt, ook Apple-foto's (HEIC). Video's: maximaal 20 seconden, zonder geluid; u kiest zelf welk stuk.</p>
+<p class="voet">Lukt het kiezen niet in dit venster? Open dan Safari of Chrome en typ bovenin: 192.168.4.1</p>
+</section>
+<section class="kaart" id="scherm" data-tab="fotos">
+<div class="kopregel"><h2>Wat staat erop</h2><button class="link" id="wijzigknop">Wijzig</button></div>
+<div class="chips" id="lijstchips"></div>
+<div class="blok" id="lijstnieuw" style="display:none;margin-bottom:12px"><p><input type="text" id="lijstnaam" maxlength="16" placeholder="Naam, bijvoorbeeld Kerst"></p><p><button id="lijstmaak">Lijst maken</button> <button class="tweede" id="lijstannuleer">Annuleren</button> <span id="lijststatus"></span></p></div>
+<div class="blok lijstblok"><div id="lijst"></div></div>
+<p id="lijstwegblok" style="display:none;margin:8px 0 0"><button class="rood" id="lijstweg" style="padding-left:16px">Deze lijst verwijderen</button> <small>(de foto's zelf blijven staan)</small></p>
+<p class="voet" id="lijstinfo"></p>
+<p class="voet" id="ruimte"></p>
+</section>
+<section class="kaart" id="tekstkaart" data-tab="dias">
+<h2>Tekst toevoegen</h2>
+<div class="blok">
+<p>Een stukje tekst als dia, bijvoorbeeld "Welkom op de baan van Jan" of "Open: zondag 13-17 uur". Druk op Enter voor een nieuwe regel.</p>
+<p><textarea id="tekst" maxlength="120" rows="3"></textarea></p>
+<p>Kleuren:
+<select id="tkeus">
+<option value="ffffff,000000">Wit op zwart</option>
+<option value="ffff00,0000aa">Geel op blauw</option>
+<option value="000000,ffd400">Zwart op geel</option>
+<option value="ffffff,cc0000">Wit op rood</option>
+<option value="cc0000,ffffff">Rood op wit</option>
+<option value="00ff66,000000">Groen op zwart</option>
+<option value="ff8800,000000">Oranje op zwart</option>
+<option value="ffffff,006633">Wit op groen</option>
+<option value="eigen">Zelf kiezen...</option>
+</select></p>
+<p id="teigen" style="display:none">Letters <input type="color" id="tvoor" value="#ffffff">
+&nbsp; Achtergrond <input type="color" id="tachter" value="#000000"></p>
+<div id="tvoorbeeld" class="tv">Voorbeeld</div>
+<p id="tcontrast" style="color:#c62828;display:none">Let op: de letters en de achtergrond lijken erg op elkaar, dan is de tekst moeilijk te lezen.</p>
+<p><button id="tekstknop">Tekst op het billboard zetten</button> <span id="tekststatus"></span></p>
+</div>
+</section>
+<section class="kaart" id="klok" data-tab="dias">
+<h2>Stationsklok</h2>
+<div class="blok">
+<p>Een stationsklok als dia tussen de foto's door. De tijd komt van internet (via uw thuis-wifi), of van uw telefoon zodra u deze pagina opent.</p>
+<p id="kloktijd"></p>
+<p><button id="klokknop">Stationsklok toevoegen</button> <span id="klokstatus"></span></p>
+</div>
+</section>
+<section class="kaart" id="weer" data-tab="dias">
+<h2>Weer</h2>
+<div class="blok">
+<p>Een dia met het weer van vandaag. Werkt alleen als het billboard met uw thuis-wifi verbonden is.</p>
+<p id="weerstatus"></p>
+<p><input type="text" id="weerplaats" maxlength="40" placeholder="Plaats, bijvoorbeeld Utrecht"></p>
+<p><button id="weerplaatsknop">Plaats opslaan</button> <span id="weerplaatsstat"></span></p>
+<p><button id="weerknop">Weer-dia toevoegen</button> <span id="weerknopstat"></span></p>
+</div>
+</section>
+<section class="kaart" id="qrdia" data-tab="dias">
+<h2>QR-code (beurs, webshop)</h2>
+<div class="blok">
+<p>Een dia met een grote QR-code, bijvoorbeeld naar uw website of webshop. Bezoekers scannen hem met hun telefoon. Handig op een beurs: maak er een afspeellijst "Beurs" bij.</p>
+<p><input type="text" id="qradres" maxlength="150" placeholder="Adres, bijvoorbeeld www.mijnwinkel.nl"></p>
+<p><input type="text" id="qrtekst" maxlength="60" placeholder="Tekst onder de code (mag leeg), bijvoorbeeld: Scan mij!"></p>
+<p><button id="qrknop">QR-code-dia toevoegen</button> <span id="qrstatus"></span></p>
+</div>
+</section>
+<section class="kaart" id="instellingen" data-tab="inst">
+<h2>Beeld en wisselen</h2>
+<div class="blok">
+<div class="rg"><div class="rechts"><span>Helderheid</span><b id="lichtwaarde"></b></div>
+<input type="range" id="licht" min="5" max="100" step="5"><small>Schuif en kijk op het scherm. Wordt meteen bewaard.</small></div>
+<div class="rg"><div class="rechts"><span>Tijd per foto</span><span><input type="number" id="tijd" min="1" max="3600"> sec</span></div></div>
+<div class="rg"><label>Willekeurige volgorde<input type="checkbox" id="willek"></label><small>Uit: dan bepaalt u zelf de volgorde (bij Foto's, Wijzig).</small></div>
+<div class="rg"><label>Zachte overgang<input type="checkbox" id="zacht"></label><small>Het scherm dimt heel kort bij de wissel.</small></div>
+<div class="rg"><label>Trivision<input type="checkbox" id="trivision"></label><small>Een nieuwe foto draait in latten in beeld, zoals een draaiend reclamebord. Alleen bij foto's; gaat voor de zachte overgang.</small></div>
+<div class="rg"><div class="rechts"><span>Zwart scherm tussendoor</span><select id="zwart" style="width:auto"><option value="0">Nee</option><option value="1">1 sec</option><option value="2">2 sec</option><option value="3">3 sec</option><option value="5">5 sec</option></select></div><small>Even zwart tussen de foto's, zoals een echt bord dat wisselt. Gaat voor de zachte overgang.</small></div>
+<div class="rg"><label>Neonbuis<input type="checkbox" id="neon"></label><small>Het scherm flikkert af en toe even, zoals een oude reclamebuis.</small></div>
+<div class="rg"><label>Wifi-code bij aanzetten<input type="checkbox" id="qr"></label><small>Laat bij het aanzetten het wifi-wachtwoord en de wifi-code op het scherm zien. Makkelijk, maar iedereen die het scherm dan ziet, kan verbinden.</small></div>
+<div class="rg"><button id="opslaan" style="width:100%">Instellingen opslaan</button> <span id="inststatus"></span></div>
+</div>
+</section>
+<section class="kaart" id="samen" data-tab="inst">
+<h2>Samen met andere billboards</h2>
+<div class="blok">
+<p>Heeft u meer billboards op uw baan? Laat ze samen wisselen, zonder router. Maak er één de leider; de andere volgen.
+Geef ze hetzelfde groepsnummer (een andere baan naast u kan een ander nummer nemen).</p>
+<p><select id="samenrol"><option value="0">Uit</option><option value="1">Leider: de andere volgen deze</option><option value="2">Volger: volgt de leider</option></select></p>
+<p id="samensoortblok"><select id="samensoort"><option value="0">Tegelijk wisselen (elk zijn eigen foto's)</option><option value="1">Zelfde nummer: dia 1, 2, 3 tegelijk (een reeks)</option></select></p>
+<p>Groep <select id="samengroep"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option></select>
+<button id="samenknop">Opslaan</button> <span id="samenstat"></span></p>
+<p id="samenburen"></p>
+<p><small>Werkt alleen als de billboards op hetzelfde wifi-kanaal zitten: allemaal zonder thuis-wifi, of allemaal met dezelfde thuis-wifi.</small></p>
+</div>
+</section>
+<section class="kaart" id="thuis" data-tab="beheer">
+<h2>Thuis-wifi</h2>
+<div class="blok">
+<p>Zet het billboard ook op uw eigen wifi thuis. Dan kunt u hem beheren zonder met de wifi van het
+billboard te verbinden<span id="updtekst">, en zet hij
+elke keer als u hem aanzet zelf een nieuwere versie erop</span>. Werkt alleen als uw thuis-wifi bij het billboard te ontvangen is;
+zonder (bijvoorbeeld op een beurs) werkt alles gewoon zoals altijd.</p>
+<p id="thuisstatus"></p>
+<p><input type="text" id="thuisnaam" maxlength="32" placeholder="Naam van uw thuis-wifi" autocomplete="off"></p>
+<p><input type="password" id="thuisww" maxlength="63" placeholder="Wachtwoord van uw thuis-wifi" autocomplete="off"><br>
+<small id="thuiswwtip"></small></p>
+<p><label><input type="checkbox" id="thuistoon"> Laat het wachtwoord zien</label></p>
+<p><button id="thuisknop">Opslaan en verbinden</button> <button class="tweede" id="thuisweg">Vergeten</button></p>
+<p id="updstatus"></p>
+<p><small>Tijdens het verbinden valt uw verbinding met het billboard ongeveer een halve minuut weg.
+Op het scherm ziet u wat er gebeurt. Verbind daarna opnieuw.</small></p>
+</div>
+</section>
+<section class="kaart" id="software" data-tab="beheer">
+<h2>Software bijwerken</h2>
+<div class="blok">
+<p>U heeft versie <b id="versie"></b>. Uw foto's en instellingen blijven bij het bijwerken altijd staan.</p>
+<div id="siteupd" style="display:none">
+<p id="sitekop">Even kijken of er een nieuwe versie is...</p>
+<p><button id="siteknop" style="display:none">Nieuwe versie erop zetten</button> <span id="sitestatus"></span></p>
+</div>
+<div id="zoekblok">
+<p id="updkop"></p>
+<p><button id="zoeknu">Nieuwste versie zoeken (alle functies)</button><br>
+<small>Zoekt de hoogste versie (ook bij de Releases) en zet die erop, alleen als die nieuwer is dan wat u heeft.</small></p>
+<p><button class="tweede" id="versieknop">Andere versie kiezen (ook oudere)</button></p>
+<div id="versieblok" style="display:none"><p><select id="versiekeus"></select></p>
+<p><button id="versieinstal">Deze versie erop zetten</button></p></div>
+<p id="zoekstatus"></p>
+<p><small>Werkt via uw thuis-wifi. Op het scherm ziet u wat er gebeurt. Wordt er iets geinstalleerd, dan start het billboard daarna opnieuw; verbind dan opnieuw met de wifi.
+De herstelversie erop zetten kan in de herstelmodus (3 keer snel de stekker erin en eruit).</small></p></div>
+<p id="geenzoek"><small>Online bijwerken kan zodra het billboard met uw thuis-wifi verbonden is (zie Thuis-wifi).</small></p>
+<details id="nieuwblok"><summary>Wat is er nieuw in versie <span id="nieuwversie"></span>?</summary><ul id="nieuwlijst"></ul></details>
+<p>Heeft u een nieuwe versie als bestand gekregen (eindigt op <b>.bin</b>)?
+Kies het hier en tik op Bijwerken. Dat duurt ongeveer een halve minuut.</p>
+<p><b>Haal tijdens het bijwerken de stekker er niet uit.</b> Gaat er toch iets mis,
+dan blijft de oude versie gewoon werken en kunt u het opnieuw proberen.</p>
+<p><label class="bestand">Bestand kiezen<input type="file" id="fw" accept=".bin,application/octet-stream"></label><br><small id="fwnaam">Nog geen bestand gekozen</small></p>
+<p><button id="fwknop">Bijwerken</button> <span id="fwstatus"></span></p>
+</div>
+</section>
+<section class="kaart" id="naam" data-tab="inst">
+<h2>Naam van dit billboard</h2>
+<div class="blok">
+<p>Dit is ook de naam van de wifi. Heeft u meer billboards, geef ze dan elk een eigen naam, bijvoorbeeld "Billboard station".</p>
+<p><input type="text" id="naam" maxlength="20"></p>
+<p><button id="naamknop">Naam opslaan</button> <span id="naamstatus"></span></p>
+</div>
+</section>
+<section class="kaart" id="ww" data-tab="inst">
+<h2>Wifi-wachtwoord</h2>
+<div class="blok">
+<p>Wachtwoord vergeten of wilt u een ander? Na het wissen is de wifi open
+("<span class="instelnaam">Billboard-instellen</span>") en kiest u een nieuw wachtwoord. Uw foto's blijven staan.</p>
+<p><button class="tweede" id="wwreset">Wachtwoord wissen</button> <span id="wwstatus"></span></p>
+</div>
+</section>
+<section class="kaart" id="wissen" data-tab="beheer">
+<h2>Alles wissen</h2>
+<div class="blok">
+<p>Wilt u het billboard helemaal leeg maken (foto's, video's, instellingen en wachtwoord),
+bijvoorbeeld om het aan iemand anders te geven?</p>
+<p>Dat gaat via de herstelmodus, zodat het nooit per ongeluk gebeurt:
+doe 3 keer snel (binnen 10 seconden) de stekker erin en eruit, en laat hem de 3e keer zitten.
+Op het scherm staat dan "Herstel". Verbind met de pagina en tik op "Alles wissen".</p>
+</div>
+</section>
+</main>
+<nav id="tabs" aria-label="Onderdelen">
+<button data-t="fotos"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 16l5-5 4 4 3-3 6 6"/><circle cx="16" cy="9" r="1.3"/></svg>Foto's</button>
+<button data-t="dias"><svg viewBox="0 0 24 24"><path d="M5 5h14M12 5v15M9 20h6"/></svg>Tekst</button>
+<button data-t="inst"><svg viewBox="0 0 24 24"><path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="17" r="2"/></svg>Instellingen</button>
+<button data-t="beheer"><svg viewBox="0 0 24 24"><path d="M2.5 9a14 14 0 0 1 19 0M5.5 12.5a9.5 9.5 0 0 1 13 0M8.6 16a5 5 0 0 1 6.8 0"/><circle cx="12" cy="19.3" r=".9" fill="currentColor"/></svg>Wifi</button>
+</nav>
+<footer>Versie <span id="fversie"></span><span id="fgezond"></span></footer>
+
+<script>
+// Koppeling voor de site (sisap0212-max.github.io/esp-modelbouw-bt).
+// maak_paginas.py zet dit stuk alleen in de site-versie van de pagina's, niet in het billboard.
+// - Alle verzoeken van de pagina ("/lijst", "/upload", ...) gaan naar het billboard (BB_ADRES),
+//   met de inlogsleutel erbij (?s=...) en met targetAddressSpace "local": dan mag Chrome/Edge
+//   vanaf deze site (https) bij het billboard op de wifi (http). De eerste keer vraagt de browser toestemming.
+// - Foto's worden als bestand opgehaald (een <img> of achtergrond mag niet rechtstreeks naar http).
+// - Inloggen: het wachtwoord van het billboard; de sleutel blijft op dit apparaat bewaard.
+// - Nieuwe software: deze site haalt hem bij GitHub en stuurt hem naar het billboard.
+window.BB_SITE = true;
+(function () {
+  const ADRES = (function () { try { return localStorage.getItem('bb_adres'); } catch (e) { return null; } })();
+  if (!ADRES) { location.replace('./'); return; }
+  window.BB_ADRES = ADRES;
+  const RAW = 'https://raw.githubusercontent.com/sisap0212-max/esp-modelbouw/bouw/';
+  const echt = window.fetch.bind(window);
+  const lees = k => { try { return localStorage.getItem(k) || ''; } catch (e) { return ''; } };
+  const zet = (k, w) => { try { localStorage.setItem(k, w); } catch (e) {} };
+
+  window.fetch = function (u, o) {
+    if (typeof u !== 'string' || !u.startsWith('/')) return echt(u, o);
+    const s = lees('bb_s');
+    const url = ADRES + u + (s ? (u.includes('?') ? '&' : '?') + 's=' + encodeURIComponent(s) : '');
+    return echt(url, Object.assign({targetAddressSpace: 'local'}, o || {})).then(r => {
+      if (r.status === 401) inloggen();
+      if (r.ok && /^\/(lijst|info)/.test(u)) r.clone().json().then(d => {
+        if (d.thuisip) zet('bb_thuis', 'http://' + d.thuisip);   // later via de thuis-wifi meteen te vinden
+        if (d.inlog) inloggen();
+      }).catch(() => {});
+      return r;
+    });
+  };
+
+  // Plaatje van het billboard als bestand ophalen en als achtergrond tonen
+  window.BB_foto = async (el, url) => {
+    try { const b = await (await fetch(url)).blob(); el.style.backgroundImage = 'url("' + URL.createObjectURL(b) + '")'; } catch (e) {}
+  };
+
+  function inloggen() {
+    if (document.getElementById('bbinlog')) return;
+    const d = document.createElement('div');
+    d.id = 'bbinlog';
+    d.style.cssText = 'position:fixed;inset:0;z-index:50;background:var(--bg);overflow:auto';
+    d.innerHTML = '<header><p class="naam">Inloggen</p><h1>Billboard</h1></header><main>' +
+      '<section style="margin:24px 0 0"><div class="blok"><p>Vul het wachtwoord van het billboard in. Dat is hetzelfde wachtwoord als van de wifi van het billboard.</p>' +
+      '<p><input type="password" id="bbww" placeholder="Wachtwoord" autocomplete="current-password"></p></div>' +
+      '<p class="voet">Dit apparaat onthoudt daarna dat u ingelogd bent.</p></section>' +
+      '<section style="margin:24px 0 0"><p><button id="bbinknop" style="width:100%">Inloggen</button></p><p id="bbinst"></p>' +
+      '<p><a href="./">Ander billboard kiezen</a></p></section></main>';
+    document.body.append(d);
+    const knop = document.getElementById('bbinknop'), st = document.getElementById('bbinst'), ww = document.getElementById('bbww');
+    const doe = async () => {
+      knop.disabled = true; st.textContent = 'Even geduld...';
+      try {
+        const r = await echt(ADRES + '/login', {method: 'POST', body: new URLSearchParams({ww: ww.value}), targetAddressSpace: 'local'});
+        if (r.ok) { const j = await r.json(); zet('bb_s', j.s || ''); location.reload(); return; }
+        st.textContent = await r.text();
+      } catch (e) { st.textContent = 'Geen verbinding met het billboard.'; }
+      knop.disabled = false;
+    };
+    knop.onclick = doe;
+    ww.onkeydown = e => { if (e.key === 'Enter') doe(); };
+    setTimeout(() => ww.focus(), 50);
+  }
+
+  // Versienummers vergelijken: "2.10" is nieuwer dan "2.9"
+  const vergelijk = (a, b) => {
+    const x = String(a).split('.').map(Number), y = String(b).split('.').map(Number);
+    for (let i = 0; i < Math.max(x.length, y.length); i++) { const d = (x[i] || 0) - (y[i] || 0); if (d) return d; }
+    return 0;
+  };
+  // Kijken of er bij GitHub een nieuwere versie voor dit billboard is, en zo ja: een knop om hem te sturen.
+  // altijd = ook een knop als het dezelfde versie is (herstelmodus: opnieuw erop zetten).
+  window.BB_nieuweVersie = async (kop, knop, st, stuur, altijd) => {
+    try {
+      const info = await (await fetch('/info', {cache: 'no-store'})).json();
+      const naam = String(info.bestand || '').replace(/\.bin$/, '');
+      const lijst = await (await echt(RAW + 'versies.json', {cache: 'no-store'})).json();
+      let beste = null;
+      for (const v of lijst.versies || []) {
+        if (/-/.test(v.versie)) continue;                    // proefversies niet
+        for (const k in v.varianten || {}) {
+          const x = v.varianten[k];
+          if (x.bestand === naam && (!beste || vergelijk(v.versie, beste.versie) > 0))
+            beste = {versie: v.versie, pad: (x.map || v.versie + '/') + x.bestand + '.bin'};
+        }
+      }
+      if (!beste) { kop.textContent = 'Voor dit billboard staat (nog) geen software online.'; return; }
+      const nieuwer = vergelijk(beste.versie, info.versie) > 0;
+      kop.innerHTML = nieuwer ? 'Er is een nieuwe versie: <b>' + beste.versie + '</b> (u heeft ' + info.versie + ').'
+                              : 'U heeft de nieuwste versie (' + info.versie + ').';
+      if (!nieuwer && !altijd) return;
+      knop.style.display = '';
+      knop.textContent = nieuwer ? 'Versie ' + beste.versie + ' erop zetten' : 'Versie ' + beste.versie + ' opnieuw erop zetten';
+      knop.onclick = async () => {
+        knop.disabled = true; st.textContent = '⏳ Software ophalen bij GitHub...';
+        try {
+          const r = await echt(RAW + beste.pad, {cache: 'no-store'});
+          if (!r.ok) throw new Error(r.status);
+          stuur(await r.blob(), st, knop);
+        } catch (e) { st.textContent = 'Ophalen mislukt. Heeft dit apparaat internet?'; knop.disabled = false; }
+      };
+    } catch (e) { kop.textContent = 'Kon niet kijken of er een nieuwe versie is (geen internet?).'; }
+  };
+
+  // Bovenaan: met welk billboard deze pagina praat, en terug naar de keuze
+  document.addEventListener('DOMContentLoaded', () => {
+    const p = document.createElement('p');
+    p.className = 'voet';
+    p.style.cssText = 'max-width:640px;margin:8px auto 0;padding:0 16px';
+    p.innerHTML = 'Verbonden met ' + ADRES.replace(/^http:\/\//, '') + ' · <a href="./">Ander billboard</a>';
+    document.body.prepend(p);
+  });
+})();
+
+</script>
+<script>
+// Foutmeldingen van de browser zijn Engels ("Failed to fetch"): vertalen naar gewoon Nederlands.
+function nl(e){const t=String(e&&e.message||e||'');return /fetch|network|load failed|abort|timed? ?out/i.test(t)?'geen verbinding met het billboard. Is uw telefoon nog met de wifi van het billboard verbonden?':t;}
+let W=320,H=240,VRIJ=0,MAXVIDEO=0,VANTHUIS=false,NAAM='Billboard';
+// Slimmer opslaan: video 5 beeldjes per seconde met kwaliteit 0,5 (een kwart kleiner dan 6 en 0,6).
+// Foto's: het geheugen werkt met blokken van 4 KB. Een foto wordt eerst met kwaliteit 0,8 gemaakt;
+// past hij met iets minder kwaliteit (hooguit 0,6) in een blok minder, dan wordt dat genomen.
+const VIDEO_MAX_S=20, VIDEO_KWALITEIT=0.5, FOTO_KWALITEIT=0.8, FOTO_MIN_KWALITEIT=0.6, BLOK=4096;
+function zet(t){document.getElementById('status').textContent=t;}
+function doek(w,h){const c=document.createElement('canvas');c.width=w;c.height=h;return c;}
+function naarBlob(c,q){return new Promise((ok,fout)=>c.toBlob(b=>b?ok(b):fout(new Error('omzetten mislukt')),'image/jpeg',q));}
+function tekenGevuld(bron,bw,bh,w,h){
+const s=Math.max(w/bw,h/bh);
+const sw=w/s,sh=h/s,sx=(bw-sw)/2,sy=(bh-sh)/2;
+const k=Math.min(1,(w*4)/sw);
+let c=doek(Math.max(w,Math.round(sw*k)),Math.max(h,Math.round(sh*k)));
+let x=c.getContext('2d');x.fillStyle='#000';x.fillRect(0,0,c.width,c.height);
+x.drawImage(bron,sx,sy,sw,sh,0,0,c.width,c.height);
+while(c.width>=w*2){
+const n=doek(Math.round(c.width/2),Math.round(c.height/2));
+n.getContext('2d').drawImage(c,0,0,n.width,n.height);c=n;
+}
+const e=doek(w,h);x=e.getContext('2d');x.imageSmoothingQuality='high';
+x.drawImage(c,0,0,w,h);
+return e;
+}
+function laadBeeld(file){
+return new Promise((ok,fout)=>{
+const u=URL.createObjectURL(file);const i=new Image();
+i.onload=()=>{URL.revokeObjectURL(u);ok(i);};
+i.onerror=()=>{URL.revokeObjectURL(u);fout(new Error('kan dit bestand niet openen'));};
+i.src=u;
+});
+}
+// Apple-foto's (HEIC): een iPhone opent ze zelf. Andere telefoons en computers niet; dan haalt de
+// pagina een omzetter van internet (te groot om op het billboard te zetten). Dat lukt dus alleen
+// als de telefoon internet heeft, bijvoorbeeld als de pagina via de thuis-wifi open is.
+const HEIC_OMZETTER='https://cdn.jsdelivr.net/npm/heic2any@0.0.4/dist/heic2any.min.js';
+let heicLaden=null;
+function laadOmzetter(){
+if(window.heic2any)return Promise.resolve();
+if(!heicLaden)heicLaden=new Promise((ok,fout)=>{
+const sc=document.createElement('script');sc.src=HEIC_OMZETTER;
+const mis=()=>{heicLaden=null;sc.remove();fout(new Error('geen omzetter'));};
+const klok=setTimeout(mis,20000);
+sc.onload=()=>{clearTimeout(klok);window.heic2any?ok():mis();};
+sc.onerror=()=>{clearTimeout(klok);mis();};
+document.head.append(sc);
+});
+return heicLaden;
+}
+async function heicNaarJpeg(file){
+try{await laadOmzetter();}
+catch(e){throw new Error('deze telefoon kan Apple-foto\'s (HEIC) niet zelf openen, en heeft nu geen internet om ze om te zetten. Open de pagina via uw thuis-wifi (bijvoorbeeld billboard.local), dan lukt het wel. Of zet de foto vanaf een iPhone op het billboard');}
+let b=await heic2any({blob:file,toType:'image/jpeg',quality:0.92});
+return Array.isArray(b)?b[0]:b;
+}
+async function maakFoto(file,nr){
+let img;
+try{img=await laadBeeld(file);}
+catch(e){
+if(!isHeic(file))throw e;
+zet((nr||'')+'Apple-foto omzetten (even geduld)...');
+img=await laadBeeld(await heicNaarJpeg(file));
+}
+const c=tekenGevuld(img,img.naturalWidth,img.naturalHeight,W,H);
+let b=await naarBlob(c,FOTO_KWALITEIT);
+const doel=Math.floor((b.size-1)/BLOK)*BLOK;          // een blok kleiner dan nu
+for(let q=FOTO_KWALITEIT-0.05;q>=FOTO_MIN_KWALITEIT-1e-9&&doel>0;q-=0.05){const t=await naarBlob(c,q);if(t.size<=doel){b=t;break;}}
+return {blob:b,naam:'foto.jpg'};
+}
+function zoekNaar(v,t){
+return new Promise(ok=>{
+let klaar=false;
+const h=()=>{if(klaar)return;klaar=true;v.removeEventListener('seeked',h);ok();};
+v.addEventListener('seeked',h);
+setTimeout(h,3000);
+v.currentTime=t;
+});
+}
+async function maakVideo(file,voortgang,begin,eind){
+const v=document.createElement('video');
+v.muted=true;v.playsInline=true;v.preload='auto';
+const u=URL.createObjectURL(file);v.src=u;
+try{
+await new Promise((ok,fout)=>{
+v.onloadedmetadata=ok;
+v.onerror=()=>fout(new Error('deze telefoon kan deze video niet afspelen (bijvoorbeeld een iPhone-video op een Android-telefoon). Zet hem op een iPhone, of kies een andere video'));
+setTimeout(()=>fout(new Error('video laden duurt te lang')),15000);
+});
+try{await v.play();v.pause();}catch(e){}
+const totaalDuur=v.duration||0;
+if(begin===undefined||!(begin>=0)||begin>=totaalDuur)begin=0;
+if(eind===undefined||!(eind>begin))eind=Math.min(totaalDuur,begin+VIDEO_MAX_S);
+eind=Math.min(eind,totaalDuur,begin+VIDEO_MAX_S);
+const duur=eind-begin;
+if(!(duur>0))throw new Error('video is leeg');
+const schaal=W>200?2:1, fw=Math.round(W/schaal), fh=Math.round(H/schaal);
+const VIDEO_FPS=W>200?8:10;   // klein scherm: kleine beeldjes, dus meer per seconde (vloeiender)
+const n=Math.max(1,Math.floor(duur*VIDEO_FPS));
+const beelden=[];let totaal=8;
+for(let i=0;i<n;i++){
+await zoekNaar(v,begin+(i+0.5)/VIDEO_FPS);
+const c=tekenGevuld(v,v.videoWidth,v.videoHeight,fw,fh);
+const b=new Uint8Array(await (await naarBlob(c,VIDEO_KWALITEIT)).arrayBuffer());
+beelden.push(b);totaal+=4+b.length;
+if(totaal>VRIJ)throw new Error('te weinig ruimte, verwijder eerst iets of gebruik een kortere video');
+if(MAXVIDEO&&totaal>MAXVIDEO)throw new Error('deze video wordt te groot, kies een korter stuk');
+voortgang(i+1,n);
+}
+const uit=new Uint8Array(totaal);
+uit.set([0x42,0x42,0x56,0x31,VIDEO_FPS,schaal,0,0],0);
+let p=8;
+for(const b of beelden){
+const l=b.length;uit[p]=l&255;uit[p+1]=(l>>8)&255;uit[p+2]=(l>>16)&255;uit[p+3]=(l>>>24)&255;
+uit.set(b,p+4);p+=4+l;
+}
+return {blob:new Blob([uit],{type:'application/octet-stream'}),naam:'video.bbv'};
+}finally{URL.revokeObjectURL(u);}
+}
+// Wat al verstuurd is, onthouden: na een fout gaat "Opnieuw proberen" verder waar het ophield.
+const VERSTUURD=new WeakSet();
+async function upload(){
+const alle=[...document.getElementById('kies').files];
+if(!alle.length){zet('Kies eerst een foto of video');return;}
+const files=alle.filter(f=>!VERSTUURD.has(f));
+const knop=document.getElementById('knop');knop.disabled=true;
+await laad(true);
+let n=alle.length-files.length;
+for(const f of files){
+const nr='Bezig met '+(n+1)+' van '+alle.length+': ';
+try{
+let r;
+if(isVideoBestand(f)){
+zet(nr+'video klaarmaken...');
+const k=knipKeuze.get(f)||{};
+r=await maakVideo(f,(i,t)=>zet(nr+'video klaarmaken ('+Math.round(i*100/t)+'%)'),k.begin,k.eind);
+}else{
+zet(nr+'foto klaarmaken...');
+r=await maakFoto(f,nr);
+}
+zet(nr+'versturen...');
+const fd=new FormData();fd.append('bestand',r.blob,r.naam);
+const a=await fetch('/upload',{method:'POST',body:fd});
+if(!a.ok)throw new Error(await a.text());
+n++;VERSTUURD.add(f);
+await laad();
+}catch(e){
+// De knop blijft staan om het opnieuw te proberen (hetzelfde bestand nog eens kiezen werkt in een browser niet)
+await laad(true);
+zet('\u2716 Dat lukte niet'+(alle.length>1?' bij '+(n+1)+' van '+alle.length:'')+': '+nl(e)+(n?' ('+n+' wel gelukt)':''));
+knop.textContent='Opnieuw proberen';knop.disabled=false;document.getElementById('knopblok').style.display='';return;}
+}
+zet('\u2714 Klaar! '+n+(n==1?' bestand':' bestanden')+' toegevoegd. Kijk maar op het scherm.');
+document.getElementById('kies').value='';document.getElementById('gekozen').textContent='';toonKnip([]);document.getElementById('knopblok').style.display='none';knop.textContent='Op het billboard zetten';knop.disabled=false;laad();
+}
+async function opslaan(){
+const t=Math.round(Number(document.getElementById('tijd').value));
+const s=document.getElementById('inststatus');
+if(!(t>=1&&t<=3600)){s.textContent='Kies een tijd tussen 1 en 3600 seconden';return;}
+const w=document.getElementById('willek').checked?1:0;
+const q=document.getElementById('qr').checked?1:0;
+const z=document.getElementById('zacht').checked?1:0;
+const tv=document.getElementById('trivision').checked?1:0;
+const ne=document.getElementById('neon').checked?1:0;
+const zw=document.getElementById('zwart').value;
+try{
+const r=await fetch('/instellingen?tijd='+t+'&willekeurig='+w+'&qr='+q+'&zacht='+z+'&trivision='+tv+'&neon='+ne+'&zwart='+zw,{method:'POST'});
+s.textContent=r.ok?'Opgeslagen':'Opslaan mislukt';
+}catch(e){s.textContent='Opslaan mislukt: is de wifi nog verbonden?';}
+laad();
+}
+// ---- Afspeellijsten: knoppen "Alles", de lijsten en "+ Nieuwe lijst" ----
+let LIJST='';
+function toonLijsten(d){
+const c=document.getElementById('lijstchips');c.textContent='';
+const knop=(naam,tekst)=>{const b=document.createElement('button');b.textContent=tekst;if((d.actief||'')===naam)b.className='aan';b.onclick=()=>kiesLijst(naam);c.append(b);};
+knop('','Alles');
+for(const l of d.lijsten||[])knop(l.n,l.n+' ('+l.a+')');
+if((d.lijsten||[]).length<8){const p=document.createElement('button');p.textContent='+ Nieuwe lijst';p.className='plus';p.onclick=()=>{document.getElementById('lijstnieuw').style.display='';document.getElementById('lijstnaam').focus();};c.append(p);}
+LIJST=d.actief||'';
+document.getElementById('lijstinfo').textContent=LIJST?'Lijst "'+LIJST+'" staat aan: alleen wat bij Wijzig aan staat voor "'+LIJST+'" komt op het scherm. Nieuwe foto\'s komen vanzelf in deze lijst.':
+'Tik op Wijzig om iets even uit te zetten, de volgorde te veranderen of iets te verwijderen. Met een lijst (bijvoorbeeld "Kerst") wisselt u met \u00e9\u00e9n tik een hele groep.';
+document.getElementById('lijstwegblok').style.display=LIJST?'':'none';
+}
+async function lijstPost(pad,naam){const r=await fetch(pad,{method:'POST',body:new URLSearchParams({naam})});return r.ok?'':await r.text();}
+async function kiesLijst(naam){try{const f=await lijstPost('/lijstkies',naam);if(f)zet(f);}catch(e){zet('Geen verbinding met het billboard');}laad();}
+let tijdGestuurd=false,samenGeladen=false;
+function toonWeerSamen(d){
+const w=d.weer||{},ws=document.getElementById('weerstatus');
+ws.style.color='';
+if(!w.plaats)ws.textContent='Nog geen plaats gekozen.';
+else if(w.ok){ws.textContent='\u2714 '+w.plaats+': '+w.t+' graden, '+w.o.toLowerCase()+' (vandaag '+w.min+' tot '+w.max+')';ws.style.color='var(--goed)';}
+else ws.textContent=w.plaats+': '+(w.fout?'\u2716 '+w.fout:'nog geen weer opgehaald (is de thuis-wifi verbonden?)');
+document.getElementById('weerknop').style.display=d.fotos.some(it=>it.wd)?'none':'';
+const sm=d.samen||{};
+if(!samenGeladen){samenGeladen=true;document.getElementById('samenrol').value=String(sm.rol||0);document.getElementById('samensoort').value=String(sm.soort||0);document.getElementById('samengroep').value=String(sm.groep||1);samenVelden();}
+const b=document.getElementById('samenburen');b.style.color='';
+if(!sm.rol){b.textContent='';return;}
+const lijst=(sm.buren||[]).map(x=>x.n+(x.r==1?' (leider)':' (volger)')).join(', ');
+if(sm.rol==2){
+if(sm.leider){b.textContent='\u2714 Volgt "'+sm.leider+'" in groep '+sm.groep;b.style.color='var(--goed)';}
+else{b.textContent='\u2716 Geen leider gevonden in groep '+sm.groep+'. Het billboard wisselt nu zelf.';b.style.color='var(--fout)';}
+}else{
+b.textContent=lijst?'\u2714 Leider van groep '+sm.groep+'. Gevonden: '+lijst:'Leider van groep '+sm.groep+'. Nog geen andere billboards gevonden.';
+b.style.color=lijst?'var(--goed)':'';
+}
+}
+function samenVelden(){document.getElementById('samensoortblok').style.display=document.getElementById('samenrol').value=='2'?'':'none';}
+async function laad(stil){   // stil: geen melding als het niet lukt (de aanroeper meldt het zelf)
+try{
+const r=await fetch('/lijst',{cache:'no-store'});const d=await r.json();
+if(d.w>0&&d.h>0){W=d.w;H=d.h;}
+VRIJ=d.vrij;MAXVIDEO=d.maxvideo||0;VANTHUIS=!!d.vanThuis;
+if(d.basis!==BASIS){BASIS=!!d.basis;toonUitvoering();}
+toonLijsten(d);
+const ti=document.getElementById('tijd');if(document.activeElement!==ti)ti.value=d.tijd;
+document.getElementById('willek').checked=!!d.willekeurig;
+document.getElementById('zacht').checked=!!d.zacht;
+document.getElementById('trivision').checked=!!d.trivision;
+document.getElementById('neon').checked=!!d.neon;
+const zs=document.getElementById('zwart');if(document.activeElement!==zs)zs.value=String(d.zwart||0);
+document.getElementById('qr').checked=!!d.qr;
+if(!lichtBezig&&d.licht){licht.value=d.licht;document.getElementById('lichtwaarde').textContent=d.licht+'%';}
+const ni=document.getElementById('naam');if(document.activeElement!==ni)ni.value=d.naam;
+document.getElementById('updtekst').style.display=d.updAan?'':'none';
+const bs=document.getElementById('bovenstatus');
+if(d.thuisOk){bs.textContent='✔ Thuis-wifi verbonden: http://'+d.host+'.local (of http://'+d.thuisIp+')';bs.style.color='var(--goed)';}
+else if(d.thuis){bs.textContent='✖ Thuis-wifi "'+d.thuis+'" niet verbonden'+(d.thuisFout?': '+d.thuisFout:'')+'.';bs.style.color='var(--fout)';}
+else bs.textContent='';
+const ts=document.getElementById('thuisstatus');
+if(d.thuisOk){ts.textContent='\u2714 Verbonden met "'+d.thuis+'". Open thuis op uw telefoon of computer: http://'+d.host+'.local (of http://'+d.thuisIp+')';ts.style.color='var(--goed)';}
+else if(d.thuis){ts.textContent='\u2716 Niet verbonden met "'+d.thuis+'"'+(d.thuisFout?' ('+d.thuisFout+')':'')+'. Tik op Opslaan en verbinden om het opnieuw te proberen.';ts.style.color='var(--fout)';}
+else{ts.textContent='Nog geen thuis-wifi ingesteld.';ts.style.color='';}
+// Vergeten alleen tonen als er iets te vergeten is; de naam alvast invullen (opnieuw proberen = een tik,
+// het wachtwoord mag dan leeg blijven: het billboard kent het nog)
+document.getElementById('thuisweg').style.display=d.thuis?'':'none';
+const tnm=document.getElementById('thuisnaam');if(d.thuis&&!tnm.value&&document.activeElement!==tnm){tnm.value=d.thuis;document.getElementById('thuisww').placeholder='Wachtwoord (leeg laten = hetzelfde als eerst)';}
+document.getElementById('zoekblok').style.display=(d.updAan&&d.thuis)?'':'none';
+document.getElementById('geenzoek').style.display=(d.updAan&&!d.thuis)?'':'none';
+document.getElementById('versie').textContent=d.versie;
+toonUpd(d);
+toonWeerSamen(d);
+const kt=document.getElementById('kloktijd');
+kt.textContent=d.klok?'\u{1F550} Tijd op het billboard: '+d.klok+(d.klokInternet?' (van internet)':' (van uw telefoon)'):'\u{1F550} Tijd nog onbekend';
+document.getElementById('klokknop').style.display=d.fotos.some(it=>it.k)?'none':'';
+// Tijd van de telefoon doorgeven (één keer per keer openen), als die niet van internet komt
+if(!tijdGestuurd&&!d.klokInternet){tijdGestuurd=true;fetch('/tijd?t='+Math.floor(Date.now()/1000),{method:'POST'}).then(()=>setTimeout(laad,500)).catch(()=>{});}
+const tn=document.getElementById('thuisnaam');if(document.activeElement!==tn&&!tn.value)tn.value=d.thuis||'';
+document.getElementById('thuiswwtip').textContent=d.thuis?'Het wachtwoord is bewaard. Leeg laten = hetzelfde houden.':'';
+document.getElementById('kop').textContent=d.naam;document.title=d.naam;NAAM=d.naam;
+document.getElementById('fversie').textContent=d.versie;
+if(d.aanS!==undefined){const u=Math.floor(d.aanS/3600),m=Math.floor(d.aanS/60)%60;
+document.getElementById('fgezond').textContent=' \u00b7 aan sinds '+(u?u+' u ':'')+m+' min \u00b7 gestart door: '+d.start+' \u00b7 geheugen '+d.blokKB+' KB';}document.querySelectorAll('.instelnaam').forEach(e=>e.textContent=d.naam+'-instellen');
+const plek=Math.max(0,Math.min(Math.floor(d.vrij/(W*H*0.16+BLOK)),600-d.fotos.length));   // gemeten: gemiddelde foto plus bestandsgegevens; 600 = MAX_DIAS in de software
+const nf=d.fotos.length;
+const naan=d.fotos.filter(it=>it.aan).length;
+document.getElementById('ruimte').textContent=(nf?'Er '+(nf==1?'staat 1 ding':'staan '+nf+' dingen')+' op (foto\'s, video\'s en teksten).':'Er staat nog niets op.')+(nf&&!naan?' LET OP: alles staat uit, het billboard laat nu niets zien. Tik op Wijzig en zet iets aan.':'')+' Er is nog plek voor ongeveer '+plek+' foto\'s.';
+LAATST=d;toonNu(d);
+const l=document.getElementById('lijst');l.textContent='';
+l.classList.toggle('wijzig',WIJZIG);
+if(!nf){const e=document.createElement('div');e.className='leeg';e.textContent='Er staat nog niets op. Tik hierboven op Foto\'s of video\'s toevoegen.';l.append(e);}
+const tel={};
+for(const it of d.fotos){
+const o=omschrijf(it,tel);
+const rij=document.createElement('div');rij.className='r'+(it.aan?'':' uit');
+const tx=document.createElement('div');tx.className='tx';
+const ti=document.createElement('div');ti.className='titel';ti.textContent=o.naam;
+const sub=document.createElement('div');sub.className='klein';sub.textContent=o.soort+(it.aan?'':' · '+(LIJST?'niet in "'+LIJST+'"':'staat uit'))+(it.p===d.nu?' · nu op het scherm':'');
+tx.append(ti,sub);
+// Bij Wijzig: aan/uit, volgorde en verwijderen
+const bed=document.createElement('div');bed.className='bed';
+const lab=document.createElement('label');
+const cb=document.createElement('input');cb.type='checkbox';cb.checked=!!it.aan;
+cb.onchange=async()=>{
+try{
+const r=await fetch('/zichtbaar?f='+encodeURIComponent(it.p)+'&aan='+(cb.checked?1:0),{method:'POST'});
+if(!r.ok)zet('Aanpassen mislukt');
+}catch(e){zet('Geen verbinding met het billboard');}
+laad();
+};
+lab.append(cb,LIJST?'In "'+LIJST+'"':'Laten zien');
+bed.append(lab);
+if(!d.willekeurig&&d.fotos.length>1){
+const pijl=(tekst,r,uit)=>{const k=document.createElement('button');k.className='tweede';k.textContent=tekst;k.title=r<0?'Eerder laten zien':'Later laten zien';k.disabled=uit;
+k.onclick=async()=>{try{const a=await fetch('/verplaats?f='+encodeURIComponent(it.p)+'&r='+r,{method:'POST'});if(!a.ok)zet('Verplaatsen mislukt');}catch(e){zet('Geen verbinding met het billboard');}laad();};return k;};
+bed.append(pijl('▲',-1,it===d.fotos[0]),pijl('▼',1,it===d.fotos[d.fotos.length-1]));
+}
+const weg=document.createElement('button');weg.className='rood';weg.textContent='Verwijderen';
+weg.onclick=async()=>{
+if(!confirm('Weet u zeker dat u "'+o.naam+'" wilt verwijderen?'))return;
+try{
+const r=await fetch('/verwijder?f='+encodeURIComponent(it.p),{method:'POST'});
+if(!r.ok)zet('Verwijderen mislukt');
+}catch(e){zet('Geen verbinding met het billboard');}
+laad();
+};
+bed.append(weg);tx.append(bed);
+rij.append(duimpje(it,false),tx);
+l.append(rij);
+}
+}catch(e){if(updWacht===null&&!stil)zet('Kan de lijst niet laden: '+nl(e));}   // tijdens bijwerken is het billboard even onbereikbaar
+}
+let WIJZIG=false,LAATST=null,BASIS=null;
+// C3 Basis: geen klok, weer, samen en effecten, en bijwerken via de site
+function toonUitvoering(){
+for(const id of ['weer','samen','zoekblok','geenzoek'])document.getElementById(id).style.display=BASIS?'none':'';
+for(const id of ['trivision','neon','zwart'])document.getElementById(id).closest('.rg').style.display=BASIS?'none':'';
+const su=document.getElementById('siteupd');su.style.display=window.BB_SITE?'':'none';
+if(window.BB_SITE&&window.BB_nieuweVersie)window.BB_nieuweVersie(document.getElementById('sitekop'),document.getElementById('siteknop'),document.getElementById('sitestatus'),stuurFirmware);
+}
+function omschrijf(it,tel){
+const soort=it.wd?'weer':it.q!==undefined?'qr':it.k?'klok':it.t!==undefined?'tekst':it.v?'video':'foto';
+if(tel)tel[soort]=(tel[soort]||0)+1;
+const nr=tel?' '+tel[soort]:'';
+if(soort=='weer')return {naam:'Weer van vandaag',soort:'Weer'};
+if(soort=='qr')return {naam:it.qt||'QR-code',soort:'QR-code · '+it.q};
+if(soort=='klok')return {naam:'Stationsklok',soort:'Klok'};
+if(soort=='tekst')return {naam:it.t.replace(/\n/g,' '),soort:'Tekst'};
+if(soort=='video')return {naam:'Video'+nr,soort:'Video'};
+return {naam:'Foto'+nr,soort:'Foto'};
+}
+// Plaatjes in de lijst pas ophalen als ze in beeld komen (anders is een billboard met veel foto's traag).
+function toonFoto(d){if(!d.dataset.foto)return;const u=d.dataset.foto;delete d.dataset.foto;
+if(window.BB_SITE)window.BB_foto(d,u);else d.style.backgroundImage='url("'+u+'")';}
+const KIJKER=('IntersectionObserver' in window)?new IntersectionObserver(l=>{for(const e of l)if(e.isIntersecting){toonFoto(e.target);KIJKER.unobserve(e.target);}},{rootMargin:'300px'}):null;
+function duimpje(it,groot){
+const d=document.createElement('div');d.className='duim'+(groot?' groot':'');
+if(it.wd){d.textContent='⛅';d.style.fontSize=groot?'34px':'22px';d.style.background='#4a90d9';}
+else if(it.q!==undefined){d.textContent='▦';d.style.fontSize=groot?'40px':'26px';d.style.background='#fff';d.style.color='#000';d.style.border='.5px solid var(--rand)';}
+else if(it.k){d.textContent='\u{1F550}';d.style.fontSize=groot?'34px':'22px';d.style.background='#1c1c1e';}
+else if(it.t!==undefined){d.textContent=it.t;d.style.color='#'+(it.tk||'ffffff');d.style.background='#'+(it.ta||'000000');}
+else{d.dataset.foto='/foto?f='+encodeURIComponent(it.p);if(groot||!KIJKER)toonFoto(d);else KIJKER.observe(d);if(it.v){d.textContent='▶';d.style.fontSize=groot?'26px':'15px';d.style.textShadow='0 1px 3px #000';}}
+return d;
+}
+let NU_PAD=null;
+function toonNu(d){
+const zicht=d.fotos.filter(it=>it.aan),i=d.fotos.findIndex(it=>it.p===d.nu);
+const naam=document.getElementById('nunaam'),info=document.getElementById('nuinfo'),beeld=document.getElementById('nubeeld');
+if(i<0){naam.textContent=d.fotos.length?'Even wisselen...':'Nog niets';info.textContent=d.fotos.length?'':'Voeg hieronder foto\'s toe';
+if(NU_PAD!==''){NU_PAD='';beeld.replaceWith(Object.assign(document.createElement('div'),{className:'duim groot',id:'nubeeld'}));}return;}
+const tel={};let o;for(const it of d.fotos.slice(0,i+1))o=omschrijf(it,tel);
+naam.textContent=o.naam;
+const plek=zicht.findIndex(it=>it.p===d.nu);
+info.textContent=plek>=0?'Dia '+(plek+1)+' van '+zicht.length:o.soort;
+if(NU_PAD!==d.nu){NU_PAD=d.nu;const n=duimpje(d.fotos[i],true);n.id='nubeeld';beeld.replaceWith(n);}
+}
+// Elke 8 seconden kijken wat er op het scherm staat (alleen het blok bovenaan, niet de hele lijst)
+setInterval(async()=>{
+if(document.hidden||document.body.dataset.tab!=='fotos'||updWacht!==null||!LAATST)return;
+try{const d=await (await fetch('/lijst',{cache:'no-store'})).json();LAATST.nu=d.nu;toonNu(d);}catch(e){}
+},8000);
+document.getElementById('wijzigknop').onclick=()=>{WIJZIG=!WIJZIG;document.getElementById('wijzigknop').textContent=WIJZIG?'Klaar':'Wijzig';document.getElementById('lijst').classList.toggle('wijzig',WIJZIG);};
+function zonderAccenten(t){return t.normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[\u2018\u2019]/g,"'").replace(/[\u201c\u201d]/g,'"').replace(/\u20ac/g,'EUR');}
+function tekstKleuren(){
+const k=document.getElementById('tkeus').value;
+if(k!=='eigen')return k.split(',');
+return [document.getElementById('tvoor').value.slice(1),document.getElementById('tachter').value.slice(1)];
+}
+function helderheidVan(h){const n=parseInt(h,16);return 0.299*(n>>16&255)+0.587*(n>>8&255)+0.114*(n&255);}
+function tekstVoorbeeld(){
+document.getElementById('teigen').style.display=document.getElementById('tkeus').value==='eigen'?'':'none';
+const [v,a]=tekstKleuren(),p=document.getElementById('tvoorbeeld');
+p.style.color='#'+v;p.style.background='#'+a;
+p.textContent=zonderAccenten(document.getElementById('tekst').value).trim()||'Voorbeeld';
+document.getElementById('tcontrast').style.display=Math.abs(helderheidVan(v)-helderheidVan(a))<60?'':'none';
+}
+for(const id of ['tkeus','tvoor','tachter','tekst'])document.getElementById(id).addEventListener('input',tekstVoorbeeld);
+document.getElementById('tkeus').addEventListener('change',tekstVoorbeeld);
+async function tekstToevoegen(){
+const s=document.getElementById('tekststatus');
+const t=zonderAccenten(document.getElementById('tekst').value).replace(/\r/g,'').trim();
+if(!t){s.textContent='Typ eerst een tekst';return;}
+if(!/^[\x20-\x7E\n]{1,120}$/.test(t)){s.textContent='Gebruik alleen gewone letters, cijfers en leestekens (geen emoji en dergelijke)';return;}
+const [k,a]=tekstKleuren();
+try{
+const r=await fetch('/tekst',{method:'POST',body:new URLSearchParams({t,k,a})});
+if(!r.ok){s.textContent=await r.text();return;}
+s.textContent='Klaar! Kijk maar op het scherm.';
+document.getElementById('tekst').value='';
+tekstVoorbeeld();
+laad();
+}catch(e){s.textContent='Dat lukte niet: '+nl(e);}
+}
+async function naamOpslaan(){
+const n=document.getElementById('naam').value.trim(),s=document.getElementById('naamstatus');
+if(!n){s.textContent='Vul een naam in';return;}
+if(!/^[A-Za-z0-9 ._-]{1,20}$/.test(n)){s.textContent='Alleen gewone letters, cijfers en spaties (geen e met accent en dergelijke), maximaal 20 tekens';return;}
+try{
+const r=await fetch('/naam',{method:'POST',body:new URLSearchParams({naam:n})});
+if(!r.ok){s.textContent=await r.text();return;}
+s.textContent='Opgeslagen. De wifi start opnieuw: verbind zo met "'+n+'" (zelfde wachtwoord).'+(VANTHUIS?' Thuis krijgt het billboard ook een nieuw adres.':'');
+}catch(e){s.textContent='Opslaan mislukt: '+nl(e);}
+}
+async function wwReset(){
+if(!confirm(VANTHUIS?'Wachtwoord wissen? Een nieuw wachtwoord kiest u daarna via de wifi van het billboard zelf ("'+NAAM+'-instellen"), niet via uw thuis-wifi. Doorgaan?':'Wachtwoord wissen? Uw verbinding valt dan even weg.'))return;
+const s=document.getElementById('wwstatus');
+try{
+const r=await fetch('/wachtwoord-reset',{method:'POST'});
+s.textContent=r.ok?'Gelukt. Over een paar seconden staan er nieuwe codes op het scherm. Scan die om een nieuw wachtwoord te kiezen.':'Wissen mislukt';
+}catch(e){s.textContent='Wissen mislukt: '+nl(e);}
+}
+// Software naar het billboard sturen. Vanaf de site met fetch (alleen fetch mag daar bij het billboard),
+// anders met XMLHttpRequest (dan is er een percentage).
+function stuurFirmware(blob,s,knop){
+const fd=new FormData();fd.append('fw',blob,'firmware.bin');
+const klaar=(ok,tekst)=>{
+if(ok)s.textContent='\u2714 Gelukt! Het billboard start nu opnieuw. Even geduld; daarna kunt u verder.';
+else{s.textContent='\u2716 Bijwerken mislukt: '+tekst+'. De oude versie werkt gewoon door.';knop.disabled=false;}};
+knop.disabled=true;
+if(window.BB_SITE){
+s.textContent='\u23F3 Bezig met versturen (ongeveer een halve minuut). Haal de stekker er niet uit.';
+fetch('/firmware?grootte='+blob.size,{method:'POST',body:fd}).then(async r=>klaar(r.ok,await r.text())).catch(e=>{s.textContent='De verbinding viel weg. Kijk op het scherm of het gelukt is; zo niet, probeer het opnieuw.';knop.disabled=false;});
+return;}
+const x=new XMLHttpRequest();
+x.open('POST','/firmware?grootte='+blob.size);
+x.upload.onprogress=e=>{if(e.lengthComputable)s.textContent='Bezig: '+Math.round(e.loaded*100/e.total)+'%';};
+x.onload=()=>klaar(x.status===200,x.responseText);
+x.onerror=()=>{s.textContent='De verbinding viel weg. Kijk op het scherm of het gelukt is; zo niet, probeer het opnieuw.';knop.disabled=false;};
+x.send(fd);
+s.textContent='Bezig: 0%. Haal de stekker er niet uit.';
+}
+function fwBijwerken(){
+const f=document.getElementById('fw').files[0],s=document.getElementById('fwstatus'),knop=document.getElementById('fwknop');
+if(!f){s.textContent='Kies eerst het bestand (.bin)';return;}
+if(!/\.bin$/i.test(f.name)){s.textContent='Dit is geen .bin-bestand';return;}
+stuurFirmware(f,s,knop);
+}
+document.getElementById('fwknop').onclick=fwBijwerken;
+document.getElementById('thuistoon').onchange=e=>{document.getElementById('thuisww').type=e.target.checked?'text':'password';};
+async function thuisOpslaan(){
+const n=document.getElementById('thuisnaam').value.trim(),w=document.getElementById('thuisww').value,s=document.getElementById('updstatus');
+if(!n||n.length>32){s.textContent='Vul de naam van uw thuis-wifi in';return;}
+if(w&&(w.length<8||w.length>63)){s.textContent='Een wifi-wachtwoord is 8 tot 63 tekens';return;}
+try{
+const r=await fetch('/thuiswifi',{method:'POST',body:new URLSearchParams({naam:n,ww:w,zoek:'1'})});
+s.textContent=r.ok?'Opgeslagen. Het billboard verbindt nu; kijk op het scherm. Verbind daarna opnieuw.':await r.text();
+}catch(e){s.textContent='Opslaan mislukt: '+nl(e);}
+}
+async function thuisVergeten(){
+const s=document.getElementById('updstatus');
+try{const r=await fetch('/thuiswifi',{method:'POST',body:new URLSearchParams({naam:'',ww:''})});s.textContent=r.ok?'Vergeten':'Mislukt';laad();}
+catch(e){s.textContent='Mislukt: '+nl(e);}
+}
+document.getElementById('thuisknop').onclick=thuisOpslaan;
+// Uitkomst van de laatste keer zoeken/bijwerken, met vinkje of kruisje. Na een klik op een van de
+// knoppen vraagt de pagina elke 3 s de stand op, tot er een nieuwe uitkomst is (updId verandert;
+// ook na een herstart, want dan begint updId opnieuw).
+let updWacht=null,updPeil=null;
+// Korte uitkomst in woorden: "Up-to-date", "Bijgewerkt naar versie X" of "Bijwerken mislukt".
+function updWoorden(d){
+if(d.updCode==1)return '\u2714 Software up-to-date: u heeft de nieuwste versie ('+d.versie+')';
+if(d.updCode==2)return '\u2714 Bijgewerkt naar versie '+d.versie;
+return '\u2716 Bijwerken mislukt: '+d.upd;
+}
+let nieuwOpen=false;
+function toonNieuw(d){
+const l=document.getElementById('nieuwlijst');l.textContent='';
+for(const r of (d.nieuw||'').split('\n'))if(r){const li=document.createElement('li');li.textContent=r;l.append(li);}
+document.getElementById('nieuwversie').textContent=d.versie;
+// Net bijgewerkt: het lijstje meteen open laten zien
+if(d.updCode==2&&!nieuwOpen){nieuwOpen=true;document.getElementById('nieuwblok').open=true;}
+}
+function toonUpd(d){
+toonNieuw(d);
+const b=document.getElementById('updboven');
+b.textContent=d.upd?updWoorden(d):'';b.style.color=d.updCode>0?'var(--goed)':'var(--fout)';
+const k=document.getElementById('updkop');
+k.textContent=b.textContent;k.style.color=b.style.color;
+if(updWacht!==null&&d.updId!==updWacht){
+const s=document.getElementById('zoekstatus');
+s.textContent=updWoorden(d);s.style.color=d.updCode>0?'var(--goed)':'var(--fout)';
+updWacht=null;clearInterval(updPeil);
+document.getElementById('zoeknu').disabled=false;
+}
+}
+async function zoek(soort){return startUpd('/zoeknu?soort='+soort);}
+async function startUpd(pad){
+const s=document.getElementById('zoekstatus');s.style.color='';
+try{
+const d0=await (await fetch('/lijst',{cache:'no-store'})).json();
+const r=await fetch(pad,{method:'POST'});const t=await r.text();
+if(!r.ok){s.textContent=t;return;}
+updWacht=d0.updId;
+document.getElementById('zoeknu').disabled=true;
+s.textContent='⏳ Bezig'+(t==='verbonden'?'':' (eerst verbinden met uw thuis-wifi, uw verbinding valt even weg)')+'... Kijk op het scherm. De uitkomst komt hier vanzelf.';
+clearInterval(updPeil);updPeil=setInterval(laad,3000);
+}catch(e){s.textContent='Geen verbinding met het billboard';}
+}
+document.getElementById('zoeknu').onclick=()=>zoek('nieuw');
+// Keuzelijst: alle versies van GitHub (Releases), nieuwste bovenaan
+async function versiesOphalen(){
+const s=document.getElementById('zoekstatus');s.style.color='';s.textContent='\u23F3 Versies ophalen bij GitHub...';
+try{
+const r=await fetch('/versies',{cache:'no-store'});
+if(!r.ok){s.textContent='\u2716 '+await r.text();s.style.color='var(--fout)';return;}
+const d=await r.json(),k=document.getElementById('versiekeus');k.textContent='';
+d.versies.forEach((v,i)=>{const o=document.createElement('option');o.value=v.v;
+o.textContent='Versie '+v.v+(v.t&&v.t!==v.v&&v.t!=='v'+v.v?' \u2013 '+v.t:'')+(v.v===d.huidig?' (deze heeft u nu)':(i===0?' (nieuwste)':''));k.append(o);});
+document.getElementById('versieblok').style.display='';s.textContent='';
+}catch(e){s.textContent='Geen verbinding met het billboard';}
+}
+document.getElementById('versieknop').onclick=versiesOphalen;
+document.getElementById('versieinstal').onclick=()=>startUpd('/installeer?versie='+encodeURIComponent(document.getElementById('versiekeus').value));
+document.getElementById('thuisweg').onclick=thuisVergeten;
+const licht=document.getElementById('licht');
+let lichtBezig=false,lichtTimer=null;
+licht.oninput=()=>{
+lichtBezig=true;
+document.getElementById('lichtwaarde').textContent=licht.value+'%';
+clearTimeout(lichtTimer);
+lichtTimer=setTimeout(()=>fetch('/helderheid?pct='+licht.value+'&opslaan=0',{method:'POST'}).catch(()=>{}),150);
+};
+licht.onchange=async()=>{
+clearTimeout(lichtTimer);
+try{await fetch('/helderheid?pct='+licht.value+'&opslaan=1',{method:'POST'});}catch(e){}
+lichtBezig=false;
+};
+const knipKeuze=new Map();
+function isVideoBestand(f){return f.type.startsWith('video/')||/\.(mov|mp4|m4v|webm|3gp)$/i.test(f.name);}
+function isHeic(f){return /\.(heic|heif)$/i.test(f.name)||/hei[cf]/i.test(f.type);}
+function tijdTekst(t){t=Math.round(t);return Math.floor(t/60)+':'+String(t%60).padStart(2,'0');}
+let knipUrls=[];
+function toonKnip(files){
+const box=document.getElementById('knip');box.textContent='';knipKeuze.clear();
+for(const u of knipUrls)URL.revokeObjectURL(u);
+knipUrls=[];
+for(const f of files){
+if(!isVideoBestand(f))continue;
+const d=document.createElement('div');d.className='k';
+const kop=document.createElement('b');kop.textContent='Video: '+f.name;
+const v=document.createElement('video');v.muted=true;v.playsInline=true;v.preload='metadata';v.src=URL.createObjectURL(f);knipUrls.push(v.src);
+const info=document.createElement('div');info.textContent='Video laden...';
+const lb=document.createElement('div');lb.textContent='Begin:';const rb=document.createElement('input');rb.type='range';rb.min=0;rb.step=0.5;
+const le=document.createElement('div');le.textContent='Einde:';const re=document.createElement('input');re.type='range';re.min=0;re.step=0.5;
+d.append(kop,v,info,lb,rb,le,re);box.append(d);
+v.onloadedmetadata=()=>{
+const D=v.duration;rb.max=D;re.max=D;
+let b=0,e=Math.min(D,VIDEO_MAX_S);
+rb.value=b;re.value=e;
+const bij=(welke)=>{
+const lengte=Math.min(VIDEO_MAX_S,Math.max(1,e-b));
+if(welke==='b'){b=Math.min(Number(rb.value),Math.max(0,D-1));e=Math.min(D,b+lengte);}
+else{e=Math.max(Number(re.value),Math.min(D,1));if(b>e-1)b=Math.max(0,e-1);if(b<e-VIDEO_MAX_S)b=e-VIDEO_MAX_S;}
+rb.value=b;re.value=e;knipKeuze.set(f,{begin:b,eind:e});
+info.textContent='Van '+tijdTekst(b)+' tot '+tijdTekst(e)+' ('+Math.round(e-b)+' seconden van de '+tijdTekst(D)+')';
+try{v.currentTime=welke==='b'?b:e;}catch(x){}
+};
+rb.oninput=()=>bij('b');re.oninput=()=>bij('e');
+bij('b');
+if(D<=VIDEO_MAX_S){info.textContent='Hele video ('+tijdTekst(D)+'), korter dan 20 seconden. Schuiven hoeft niet.';}
+};
+v.onerror=()=>{info.textContent='Deze telefoon kan deze video niet afspelen (bijvoorbeeld een iPhone-video op een Android-telefoon). Zet hem op een iPhone, of kies een andere video.';};
+}
+}
+function toonGekozen(){
+const files=[...document.getElementById('kies').files];const n=files.length;
+document.getElementById('gekozen').textContent=n?(n==1?'1 bestand gekozen':n+' bestanden gekozen'):'';
+toonKnip(files);
+const metVideo=files.some(isVideoBestand);
+document.getElementById('knop').textContent='Op het billboard zetten';
+document.getElementById('knopblok').style.display=metVideo?'':'none';
+if(metVideo)zet('Kies hieronder welk stuk van de video erop komt en tik op Op het billboard zetten.');
+else if(n)upload();
+}
+document.getElementById('kies').onchange=toonGekozen;
+document.getElementById('fw').onchange=e=>{const f=e.target.files[0];document.getElementById('fwnaam').textContent=f?'Gekozen: '+f.name:'Nog geen bestand gekozen';};
+// Tabbladen onderaan. Een link naar een onderdeel (bijvoorbeeld #thuis) opent vanzelf het goede tabblad.
+const TABKOP={fotos:"Foto's",dias:'Tekst, klok en weer',inst:'Instellingen',beheer:'Wifi en updates'};
+function toonTab(t,id){
+if(!TABKOP[t])t='fotos';
+document.body.dataset.tab=t;
+document.querySelectorAll('#tabs button').forEach(b=>{b.classList.toggle('aan',b.dataset.t==t);b.setAttribute('aria-current',b.dataset.t==t?'page':'false');});
+document.getElementById('titel').textContent=TABKOP[t];
+const el=id&&document.getElementById(id);
+if(el)el.scrollIntoView();else scrollTo(0,0);
+}
+function tabUitHash(){
+const h=location.hash.slice(1);if(!h)return toonTab('fotos');
+if(TABKOP[h])return toonTab(h);
+const el=document.getElementById(h),k=el&&el.closest('.kaart');
+if(k)toonTab(k.dataset.tab,h);
+}
+document.querySelectorAll('#tabs button').forEach(b=>b.onclick=()=>{history.replaceState(null,'','#'+b.dataset.t);toonTab(b.dataset.t);});
+addEventListener('hashchange',tabUitHash);
+tabUitHash();
+document.getElementById('knop').onclick=upload;
+document.getElementById('opslaan').onclick=opslaan;
+document.getElementById('wwreset').onclick=wwReset;
+document.getElementById('naamknop').onclick=naamOpslaan;
+document.getElementById('tekstknop').onclick=tekstToevoegen;
+document.getElementById('lijstmaak').onclick=async()=>{
+const n=document.getElementById('lijstnaam').value.trim(),s=document.getElementById('lijststatus');
+if(!/^[A-Za-z0-9 ._-]{1,16}$/.test(n)){s.textContent='Gewone letters, cijfers en spaties, hooguit 16 tekens';return;}
+try{const f=await lijstPost('/lijstmaak',n);if(f){s.textContent=f;return;}
+s.textContent='';document.getElementById('lijstnaam').value='';document.getElementById('lijstnieuw').style.display='none';laad();}
+catch(e){s.textContent='Geen verbinding met het billboard';}
+};
+document.getElementById('lijstannuleer').onclick=()=>{document.getElementById('lijstnieuw').style.display='none';};
+document.getElementById('lijstweg').onclick=async()=>{try{const f=await lijstPost('/lijstweg',LIJST);if(f)zet(f);}catch(e){zet('Geen verbinding met het billboard');}laad();};
+document.getElementById('samenrol').onchange=samenVelden;
+document.getElementById('samenknop').onclick=async()=>{
+const s=document.getElementById('samenstat');
+const q='rol='+document.getElementById('samenrol').value+'&soort='+document.getElementById('samensoort').value+'&groep='+document.getElementById('samengroep').value;
+try{const r=await fetch('/samen?'+q,{method:'POST'});s.textContent=r.ok?'Opgeslagen':await r.text();setTimeout(laad,4000);laad();}
+catch(e){s.textContent='Geen verbinding met het billboard';}
+};
+document.getElementById('weerplaatsknop').onclick=async()=>{
+const s=document.getElementById('weerplaatsstat'),p=document.getElementById('weerplaats').value.trim();
+if(!p){s.textContent='Vul een plaats in';return;}
+s.textContent='\u23F3 Opzoeken...';
+try{const r=await fetch('/weerplaats',{method:'POST',body:new URLSearchParams({plaats:p})});s.textContent=(r.ok?'\u2714 ':'\u2716 ')+await r.text();laad();}
+catch(e){s.textContent='Geen verbinding met het billboard';}
+};
+document.getElementById('weerknop').onclick=async()=>{
+const s=document.getElementById('weerknopstat');
+try{const r=await fetch('/weer',{method:'POST'});s.textContent=r.ok?'Klaar! Kijk maar op het scherm.':await r.text();laad();}
+catch(e){s.textContent='Geen verbinding met het billboard';}
+};
+document.getElementById('qrknop').onclick=async()=>{
+const s=document.getElementById('qrstatus');
+const a=document.getElementById('qradres').value.trim(),t=document.getElementById('qrtekst').value.trim();
+if(!a){s.textContent='Vul eerst een adres in';return;}
+try{const r=await fetch('/qr',{method:'POST',body:new URLSearchParams({adres:a,tekst:t})});
+s.textContent=r.ok?'Klaar! Kijk maar op het scherm.':await r.text();
+if(r.ok){document.getElementById('qradres').value='';document.getElementById('qrtekst').value='';}laad();}
+catch(e){s.textContent='Geen verbinding met het billboard';}
+};
+document.getElementById('klokknop').onclick=async()=>{
+const s=document.getElementById('klokstatus');
+try{const r=await fetch('/klok',{method:'POST'});s.textContent=r.ok?'Klaar! Kijk maar op het scherm.':await r.text();laad();}
+catch(e){s.textContent='Geen verbinding met het billboard';}
+};
+laad();
+</script></body></html>
