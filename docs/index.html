@@ -43,10 +43,19 @@ footer{text-align:center;color:var(--zacht);font-size:12px;padding:24px 16px 32p
 <header><p class="naam">Mini-billboard</p><h1>Verbinden</h1></header>
 <main>
 
-<section id="metsite" style="display:none"><h2>Verbinden</h2>
+<section><h2>Nieuw billboard? Eén keer instellen</h2>
+<div class="blok"><ol>
+<li><div>Steek de stekker van het billboard in het stopcontact.<small>Op het scherm staat de wifi <b>Billboard-instellen</b>.</small></div></li>
+<li><div>Verbind uw telefoon met de wifi <b>Billboard-instellen</b>.<small>Er is geen wachtwoord nodig. Zegt uw telefoon "geen internet"? Kies dan "Verbonden blijven".</small></div></li>
+<li><div>De instelpagina opent vanzelf. Gebeurt dat niet, tik dan hieronder op <b>Verbinden</b> of typ <b>192.168.4.1</b> in uw browser.</div></li>
+<li><div>Kies een wachtwoord, en vul <b>uw thuis-wifi</b> in.<small>Dat is de belangrijkste stap: daarna hoeft u nooit meer van wifi te wisselen.</small></div></li>
+<li><div>Zet uw telefoon terug op uw thuis-wifi.<small>Klaar. Vanaf nu opent u het billboard gewoon vanaf uw thuis-wifi.</small></div></li>
+</ol></div></section>
+
+<section id="metsite" style="display:none"><h2>Bedienen</h2>
 <div class="blok"><ol>
 <li><div>Zet het billboard aan.<small>Stekker erin. Op het scherm staat de naam van de wifi.</small></div></li>
-<li><div>Nieuw billboard? Kies op uw telefoon de wifi <b>Billboard-instellen</b>.<small>Staat het billboard al op uw thuis-wifi, dan blijft u gewoon op uw thuis-wifi.</small></div></li>
+<li><div>Blijf op uw thuis-wifi.<small>Alleen als het billboard geen thuis-wifi heeft (bijvoorbeeld op een beurs), verbindt u met de wifi van het billboard zelf.</small></div></li>
 <li><div>Tik hieronder op <b>Verbinden</b> en tik op <b>Toestaan</b> als de browser het vraagt.<small>De site zoekt het billboard dan zelf.</small></div></li>
 </ol></div>
 <button class="knop" id="verbind">Verbinden</button>
@@ -61,19 +70,18 @@ footer{text-align:center;color:var(--zacht);font-size:12px;padding:24px 16px 32p
 <p class="voet">Zegt uw telefoon bij de wifi van het billboard "geen internet"? Kies dan "Verbonden blijven". Dat klopt: het billboard heeft zijn eigen wifi.</p>
 </section>
 
-<section id="zondersite"><h2>Zo verbindt u</h2>
+<section id="zondersite"><h2>Zonder thuis-wifi (bijvoorbeeld op een beurs)</h2>
 <div class="blok"><ol>
-<li><div>Zet het billboard aan.<small>Stekker erin. Op het scherm staat de naam van de wifi.</small></div></li>
-<li><div>Kies op uw telefoon de wifi van het billboard.<small>Instellingen → Wifi → bijvoorbeeld "Billboard". De eerste keer heet hij "Billboard-instellen" en is er geen wachtwoord.</small></div></li>
+<li><div>Zet het billboard aan.</div></li>
+<li><div>Kies op uw telefoon de wifi van het billboard.<small>Instellingen → Wifi → de naam van uw billboard, met het wachtwoord dat u bij het instellen koos.</small></div></li>
 <li><div>Tik hieronder op Open mijn billboard.<small>Vaak opent de pagina al vanzelf zodra u verbonden bent.</small></div></li>
 </ol></div>
 <a class="knop" id="open" href="http://192.168.4.1/">Open mijn billboard</a>
-<p class="voet" id="basismelding"><b>Billboard Basis (C3)?</b> Die bedient u alleen met <b>Chrome of Edge</b> op een Android-telefoon of een computer. Op een iPhone of iPad lukt dat niet.</p>
 </section>
 
-<section id="thuisdeel"><h2>Pagina in het billboard (S3 en 2,2-inch)</h2>
+<section id="thuisdeel"><h2>Op uw thuis-wifi (iPhone en alle andere telefoons)</h2>
 <div class="blok">
-<p>Deze billboards hebben ook een eigen pagina. Thuis opent u die met de naam van het billboard.</p>
+<p>Staat het billboard op uw thuis-wifi? Dan opent u zijn pagina met de naam van het billboard, zonder van wifi te wisselen. Dit werkt op elke telefoon, ook op een iPhone.</p>
 <p><input id="naam" maxlength="20" placeholder="Naam van het billboard" value="Billboard" autocomplete="off" autocapitalize="off"></p>
 </div>
 <a class="knop tweede" id="thuis" href="http://billboard.local/">Open via thuis-wifi</a>
@@ -126,8 +134,8 @@ veld.oninput=bijwerken;bijwerken();
 
 // Mag deze browser vanaf de site met het billboard praten? (Chrome en Edge 145 en nieuwer: "Local Network Access")
 const LNA=(()=>{try{return new Request('http://192.168.4.1/',{targetAddressSpace:'local'}).targetAddressSpace==='local';}catch(e){return false;}})();
-if(LNA){document.getElementById('metsite').style.display='';document.getElementById('basismelding').style.display='none';
-document.querySelector('#zondersite h2').textContent='Of: pagina in het billboard (S3 en 2,2-inch)';}
+if(LNA){document.getElementById('metsite').style.display='';
+}
 
 const st=document.getElementById('zoekst');
 // Eén adres proberen: antwoordt daar een billboard?

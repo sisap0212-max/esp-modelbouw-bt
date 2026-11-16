@@ -21,6 +21,11 @@ main{padding-bottom:40px}
 <section class="kaart"><h2>Naam van dit billboard</h2><div class="blok">
 <p><input type="text" id="naam" maxlength="20" value="Billboard"></p>
 </div><p class="voet">Mag u laten staan. Dit wordt ook de naam van de wifi. Heeft u meer billboards, geef ze dan elk een eigen naam, bijvoorbeeld "Billboard station".</p></section>
+<section class="kaart"><h2>Uw thuis-wifi (aanbevolen)</h2><div class="blok">
+<p>Vul hier de wifi van uw huis in. Dan hoeft u daarna <b>nooit meer van wifi te wisselen</b>: uw telefoon blijft op uw eigen wifi en u opent het billboard gewoon vanaf daar.</p>
+<p><input type="text" id="thuisnaam" maxlength="32" placeholder="Naam van uw thuis-wifi" autocomplete="off" autocapitalize="off"></p>
+<p><input type="password" id="thuisww" maxlength="63" placeholder="Wachtwoord van uw thuis-wifi" autocomplete="off"></p>
+</div><p class="voet">Mag u leeg laten, bijvoorbeeld op een beurs. Later instellen kan ook (tabblad Wifi).</p></section>
 <section class="kaart"><p><button id="opslaan">Opslaan</button></p>
 <p id="status"></p></section>
 </main>
@@ -157,10 +162,15 @@ if(a!==b){s.textContent='De twee wachtwoorden zijn niet hetzelfde';return;}
 const n=document.getElementById('naam').value.trim();
 if(!/^[A-Za-z0-9 ._-]{1,20}$/.test(n)){s.textContent='De naam: alleen gewone letters, cijfers en spaties, 1 tot 20 tekens';return;}
 try{
-const r=await fetch('/wachtwoord',{method:'POST',body:new URLSearchParams({ww:a,naam:n})});
+const tn=document.getElementById('thuisnaam').value.trim(),tw=document.getElementById('thuisww').value;
+if(tn&&tw&&(tw.length<8||tw.length>63)){s.textContent='Het wachtwoord van uw thuis-wifi is 8 tot 63 tekens';return;}
+const r=await fetch('/wachtwoord',{method:'POST',body:new URLSearchParams({ww:a,naam:n,thuisnaam:tn,thuisww:tw})});
 if(!r.ok){s.textContent=await r.text();return;}
 document.getElementById('opslaan').disabled=true;
-if(window.BB_SITE){s.innerHTML='\u2714 Gelukt! Het billboard start zijn wifi nu opnieuw met uw wachtwoord. Verbind uw telefoon met de wifi <b>'+n.replace(/[<>&]/g,'')+'</b> (met het nieuwe wachtwoord) en tik daarna op Verder.<p><a class="knop" href="bedienen.html" style="display:block;text-align:center;background:var(--accent);color:#fff;padding:12px;border-radius:10px;text-decoration:none;font-weight:600">Verder</a></p>';return;}
+const veilig=x=>x.replace(/[<>&]/g,'');
+if(tn){   // met thuis-wifi: terug naar de eigen wifi van de klant, dan is het klaar
+s.innerHTML='\u2714 Gelukt! Het billboard maakt nu verbinding met <b>'+veilig(tn)+'</b>. Zet uw telefoon terug op <b>'+veilig(tn)+'</b> en '+(window.BB_SITE?'tik daarna op <b>Verder</b>. De site vindt het billboard dan op uw thuis-wifi.<p><a class="knop" href="index.html" style="display:block;text-align:center;background:var(--accent);color:#fff;padding:12px;border-radius:10px;text-decoration:none;font-weight:600">Verder</a></p>':'open daarna <b>http://'+veilig(n).toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')+'.local</b>, of de site <b>sisap0212-max.github.io/esp-modelbouw-bt</b> in Chrome. Lukt het niet? Het adres staat ook op het scherm van het billboard.');
+}else if(window.BB_SITE){s.innerHTML='\u2714 Gelukt! Het billboard start zijn wifi nu opnieuw met uw wachtwoord. Verbind uw telefoon met de wifi <b>'+n.replace(/[<>&]/g,'')+'</b> (met het nieuwe wachtwoord) en tik daarna op Verder.<p><a class="knop" href="bedienen.html" style="display:block;text-align:center;background:var(--accent);color:#fff;padding:12px;border-radius:10px;text-decoration:none;font-weight:600">Verder</a></p>';return;}
 s.textContent='Gelukt! Uw verbinding valt nu even weg. Over een paar seconden staan er nieuwe codes op het scherm: scan eerst de wifi-code en daarna de code voor de pagina. Geen code? Verbind dan met de wifi "'+n+'" en uw nieuwe wachtwoord. De pagina opent dan vanzelf; zo niet, ga naar 192.168.4.1.';
 }catch(e){s.textContent='Opslaan mislukt: '+nl(e);}
 };
