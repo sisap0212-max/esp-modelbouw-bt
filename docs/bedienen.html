@@ -135,7 +135,8 @@ body[data-tab=fotos] .kaart:not([data-tab=fotos]),body[data-tab=dias] .kaart:not
 <div class="rg"><label>Trivision<input type="checkbox" id="trivision"></label><small>Een nieuwe foto draait in latten in beeld, zoals een draaiend reclamebord. Alleen bij foto's; gaat voor de zachte overgang.</small></div>
 <div class="rg"><div class="rechts"><span>Zwart scherm tussendoor</span><select id="zwart" style="width:auto"><option value="0">Nee</option><option value="1">1 sec</option><option value="2">2 sec</option><option value="3">3 sec</option><option value="5">5 sec</option></select></div><small>Even zwart tussen de foto's, zoals een echt bord dat wisselt. Gaat voor de zachte overgang.</small></div>
 <div class="rg"><label>Neonbuis<input type="checkbox" id="neon"></label><small>Het scherm flikkert af en toe even, zoals een oude reclamebuis.</small></div>
-<div class="rg"><label>Wifi-code bij aanzetten<input type="checkbox" id="qr"></label><small>Laat bij het aanzetten het wifi-wachtwoord en de wifi-code op het scherm zien. Makkelijk, maar iedereen die het scherm dan ziet, kan verbinden.</small></div>
+<div class="rg"><label>Meldingen op het scherm<input type="checkbox" id="meld"></label><small>Uit: het billboard laat alleen uw foto's zien, ook meteen bij het aanzetten. Handig op een beurs. Aan: bij het aanzetten kort de naam van de wifi, en meldingen over de thuis-wifi, de klok en nieuwe software.</small></div>
+<div class="rg" id="qrrij"><label>Wifi-code bij aanzetten<input type="checkbox" id="qr"></label><small>Laat bij het aanzetten het wifi-wachtwoord en de wifi-code op het scherm zien. Makkelijk, maar iedereen die het scherm dan ziet, kan verbinden.</small></div>
 <div class="rg"><button id="opslaan" style="width:100%">Instellingen opslaan</button> <span id="inststatus"></span></div>
 </div>
 </section>
@@ -512,12 +513,13 @@ const s=document.getElementById('inststatus');
 if(!(t>=1&&t<=3600)){s.textContent='Kies een tijd tussen 1 en 3600 seconden';return;}
 const w=document.getElementById('willek').checked?1:0;
 const q=document.getElementById('qr').checked?1:0;
+const ml=document.getElementById('meld').checked?1:0;
 const z=document.getElementById('zacht').checked?1:0;
 const tv=document.getElementById('trivision').checked?1:0;
 const ne=document.getElementById('neon').checked?1:0;
 const zw=document.getElementById('zwart').value;
 try{
-const r=await fetch('/instellingen?tijd='+t+'&willekeurig='+w+'&qr='+q+'&zacht='+z+'&trivision='+tv+'&neon='+ne+'&zwart='+zw,{method:'POST'});
+const r=await fetch('/instellingen?tijd='+t+'&willekeurig='+w+'&qr='+q+'&meld='+ml+'&zacht='+z+'&trivision='+tv+'&neon='+ne+'&zwart='+zw,{method:'POST'});
 s.textContent=r.ok?'Opgeslagen':'Opslaan mislukt';
 }catch(e){s.textContent='Opslaan mislukt: is de wifi nog verbonden?';}
 laad();
@@ -573,6 +575,7 @@ document.getElementById('trivision').checked=!!d.trivision;
 document.getElementById('neon').checked=!!d.neon;
 const zs=document.getElementById('zwart');if(document.activeElement!==zs)zs.value=String(d.zwart||0);
 document.getElementById('qr').checked=!!d.qr;
+document.getElementById('meld').checked=!!d.meld;document.getElementById('qrrij').style.display=d.meld?'':'none';
 if(!lichtBezig&&d.licht){licht.value=d.licht;document.getElementById('lichtwaarde').textContent=d.licht+'%';}
 const ni=document.getElementById('naam');if(document.activeElement!==ni)ni.value=d.naam;
 document.getElementById('updtekst').style.display=d.updAan?'':'none';
@@ -703,6 +706,7 @@ if(document.hidden||document.body.dataset.tab!=='fotos'||updWacht!==null||!LAATS
 try{const d=await (await fetch('/lijst',{cache:'no-store'})).json();LAATST.nu=d.nu;toonNu(d);}catch(e){}
 },8000);
 document.getElementById('wijzigknop').onclick=()=>{WIJZIG=!WIJZIG;document.getElementById('wijzigknop').textContent=WIJZIG?'Klaar':'Wijzig';document.getElementById('lijst').classList.toggle('wijzig',WIJZIG);};
+document.getElementById('meld').onchange=e=>{document.getElementById('qrrij').style.display=e.target.checked?'':'none';};
 function zonderAccenten(t){return t.normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[\u2018\u2019]/g,"'").replace(/[\u201c\u201d]/g,'"').replace(/\u20ac/g,'EUR');}
 function tekstKleuren(){
 const k=document.getElementById('tkeus').value;
