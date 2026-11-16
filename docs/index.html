@@ -38,6 +38,13 @@ p{margin:8px 0}
 ul{margin:0;padding-left:20px}ul li{margin:6px 0}
 details .blok{margin-top:8px}
 summary{cursor:pointer;color:var(--accent);margin:0 16px}
+#bblijst button{display:flex;align-items:center;gap:12px;width:100%;background:none;border:0;border-bottom:.5px solid var(--rand);padding:12px 16px 12px 0;font:inherit;color:var(--tekst);text-align:left;cursor:pointer}
+#bblijst button:last-child{border-bottom:0}
+#bblijst button:disabled{opacity:.45;cursor:default}
+#bblijst .stip{flex:none;width:10px;height:10px;border-radius:50%;background:#34c759}
+#bblijst button:disabled .stip{background:var(--zacht)}
+#bblijst .tx{flex:1;min-width:0}#bblijst .tx small{margin:0}
+#bblijst .pijl{color:var(--zacht);font-size:20px}
 footer{text-align:center;color:var(--zacht);font-size:12px;padding:24px 16px 32px}
 </style></head><body>
 <header><p class="naam">Mini-billboard</p><h1>Verbinden</h1></header>
@@ -56,9 +63,13 @@ footer{text-align:center;color:var(--zacht);font-size:12px;padding:24px 16px 32p
 <div class="blok"><ol>
 <li><div>Zet het billboard aan.<small>Stekker erin. Op het scherm staat de naam van de wifi.</small></div></li>
 <li><div>Blijf op uw thuis-wifi.<small>Alleen als het billboard geen thuis-wifi heeft (bijvoorbeeld op een beurs), verbindt u met de wifi van het billboard zelf.</small></div></li>
-<li><div>Tik hieronder op <b>Verbinden</b> en tik op <b>Toestaan</b> als de browser het vraagt.<small>De site zoekt het billboard dan zelf.</small></div></li>
+<li><div>Tik hieronder op <b>Verbinden</b> en tik op <b>Toestaan</b> als de browser het vraagt.<small>U krijgt een lijst met de billboards die de site vindt. Tik op het billboard dat u wilt bedienen.</small></div></li>
 </ol></div>
 <button class="knop" id="verbind">Verbinden</button>
+<div id="lijstblok" style="display:none;margin-top:18px">
+<h2>Kies uw billboard</h2>
+<div class="blok" id="bblijst" style="padding:0 0 0 16px"></div>
+</div>
 <p id="zoekst" class="voet"></p>
 <div id="handblok" style="display:none">
 <div class="blok" style="margin-top:12px">
@@ -145,24 +156,61 @@ const r=await fetch(adres+'/info',{targetAddressSpace:'local',cache:'no-store',s
 if(!r.ok)return null;const d=await r.json();return d&&d.versie?d:null;
 }catch(e){return null;}
 }
+// Billboards die deze telefoon al eens gevonden heeft (alleen op deze telefoon bewaard)
+function bekend(){try{return JSON.parse(lees('bb_lijst')||'[]');}catch(e){return [];}}
+function onthoud(adres,d){
+const l=bekend().filter(x=>x.naam!==d.naam);
+l.unshift({naam:d.naam,adres:adres,thuis:d.thuisip?'http://'+d.thuisip:''});
+zet('bb_lijst',JSON.stringify(l.slice(0,10)));
+}
+let WEG=false;
 function ga(adres,d){
-zet('bb_adres',adres);
+WEG=true;onthoud(adres,d);zet('bb_adres',adres);
 location.href=d.modus==='instellen'?'instellen.html':d.modus==='herstel'?'herstel.html':'bedienen.html';
 }
+// Een regel in de lijst: een billboard dat (nog) niet antwoordt staat er grijs bij
+const RIJEN=new Map();
+function rij(naam,adres,d,uitleg){
+const lijst=document.getElementById('bblijst');
+let k=RIJEN.get(naam);
+if(!k){k=document.createElement('button');k.innerHTML='<span class="stip"></span><span class="tx"><b></b><small></small></span><span class="pijl">›</span>';RIJEN.set(naam,k);lijst.append(k);}
+if(k.dataset.ok&&!d)return;          // al gevonden: niet terug naar grijs
+k.querySelector('b').textContent=naam;
+const plek=adres.replace('http://','');
+k.querySelector('small').textContent=d?(d.modus==='instellen'?'Nieuw: nog instellen · ':'')+(plek==='192.168.4.1'?'via de wifi van het billboard':'via uw wifi ('+plek+')'):uitleg;
+k.disabled=!d;
+if(d){k.dataset.ok=1;k.onclick=()=>ga(adres,d);lijst.prepend(k);}
+document.getElementById('lijstblok').style.display='';
+}
+// Veel adressen tegelijk proberen, met een kleine wachttijd per adres
+async function scan(adressen,bijElk){
+let i=0;const N=adressen.length;
+async function werker(){while(i<N&&!WEG){const a=adressen[i++];const d=await probeer(a,1500);if(d)bijElk(a,d);if(i%40===0)st.textContent='Zoeken op uw wifi... '+Math.min(100,Math.round(i*100/N))+'%';}}
+await Promise.all(Array.from({length:48},werker));
+}
 async function zoek(){
-const knop=document.getElementById('verbind');knop.disabled=true;
+const knop=document.getElementById('verbind');knop.disabled=true;WEG=false;
 let toestemming='';
 for(const n of ['local-network-access','local-network']){try{toestemming=(await navigator.permissions.query({name:n})).state;break;}catch(e){}}
-const plekken=[...new Set([lees('bb_adres'),lees('bb_thuis'),'http://'+host(veld.value)+'.local','http://192.168.4.1'].filter(Boolean))];
-let eerste=true;
-for(const a of plekken){
-st.textContent='Zoeken: '+a.replace('http://','')+' ...';
-// De eerste keer wacht de browser op uw "Toestaan": dan langer wachten
-const d=await probeer(a,eerste&&toestemming!=='granted'?30000:4000);eerste=false;
-if(d){st.textContent='Gevonden: '+d.naam;ga(a,d);return;}
-}
-st.textContent='Geen billboard gevonden. Staat het aan, en zit uw telefoon op dezelfde wifi?';
-document.getElementById('handblok').style.display='';knop.disabled=false;
+let gevonden=0;
+const vond=(a,d)=>{gevonden++;rij(d.naam,a,d);};
+// 1. bekende billboards grijs alvast in de lijst, daarna kijken wie er antwoordt
+const oud=bekend();
+for(const b of oud)rij(b.naam,b.adres,null,'zoeken...');
+const plekken=[...new Set([...oud.flatMap(b=>[b.thuis,b.adres]),lees('bb_adres'),lees('bb_thuis'),'http://'+host(veld.value)+'.local','http://192.168.4.1'].filter(Boolean))];
+st.textContent='Zoeken...';
+// De eerste keer wacht de browser op uw "Toestaan": dat ene adres langer laten proberen
+if(toestemming!=='granted'){const a=plekken.shift();const d=await probeer(a,30000);if(d)vond(a,d);}
+await Promise.all(plekken.map(async a=>{const d=await probeer(a,4000);if(d)vond(a,d);}));
+// 2. de rest van uw wifi afzoeken (de gangbare adressen van thuisrouters)
+const netten=[...new Set([...oud.map(b=>(b.thuis||'').replace('http://','').split('.').slice(0,3).join('.')).filter(x=>x.split('.').length===3),'192.168.178','192.168.1','192.168.0','192.168.2','10.0.0','10.0.1'])];
+const al=new Set(plekken);
+const adressen=[];for(const n of netten)for(let x=1;x<255;x++){const a='http://'+n+'.'+x;if(!al.has(a))adressen.push(a);}
+if(!WEG)await scan(adressen,vond);
+if(WEG)return;
+for(const [naam,k] of RIJEN)if(!k.dataset.ok)k.querySelector('small').textContent='niet gevonden: staat hij aan?';
+st.textContent=gevonden?'Tik op het billboard dat u wilt bedienen.':'Geen billboard gevonden. Staat het aan, en zit uw telefoon op dezelfde wifi?';
+document.getElementById('handblok').style.display='';knop.disabled=false;knop.textContent='Opnieuw zoeken';
 }
 document.getElementById('verbind').onclick=zoek;
 document.getElementById('handknop').onclick=async()=>{
