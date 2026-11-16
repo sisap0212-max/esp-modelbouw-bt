@@ -5,14 +5,17 @@
 <style>
 :root{--accent:#007aff;--bg:#f2f2f7;--kaart:#ffffff;--tekst:#000000;--zacht:#6d6d72;--rand:#e3e3e8;--veld:#f2f2f7;--knop2:#e9e9ee;--schakel-uit:#e3e3e8;--goed:#248a3d;--fout:#d70015;--balk:rgba(249,249,249,.94);--rond-kaart:12px;--rond-knop:10px;--letter:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,system-ui,sans-serif;}@media(prefers-color-scheme:dark){:root{--accent:#0a84ff;--bg:#000000;--kaart:#1c1c1e;--tekst:#ffffff;--zacht:#8e8e93;--rand:#38383a;--veld:#2c2c2e;--knop2:#2c2c2e;--schakel-uit:#39393d;--goed:#30d158;--fout:#ff453a;--balk:rgba(22,22,24,.94);}}*{box-sizing:border-box}html{-webkit-text-size-adjust:100%}body{margin:0;background:var(--bg);color:var(--tekst);font:17px/1.35 var(--letter);-webkit-font-smoothing:antialiased}main{max-width:640px;margin:0 auto;padding:0 16px 24px}header{max-width:640px;margin:0 auto;padding:14px 16px 4px}.naam{margin:0;font-size:15px;font-weight:600;color:var(--zacht)}h1{font-size:34px;line-height:1.15;font-weight:700;letter-spacing:.2px;margin:2px 0 6px}h2{font-size:13px;font-weight:400;text-transform:uppercase;letter-spacing:.3px;color:var(--zacht);margin:0 16px 7px}.kopregel{display:flex;align-items:flex-end;justify-content:space-between;margin:0 0 7px}.kopregel h2{margin-bottom:0}.kaart{margin:24px 0 0;scroll-margin-top:12px}.blok{background:var(--kaart);border-radius:var(--rond-kaart);padding:12px 16px;overflow:hidden}.blok>p:first-child{margin-top:2px}.blok>p:last-child{margin-bottom:2px}.blok+.blok{margin-top:12px}p{margin:10px 0}.voet{font-size:13px;color:var(--zacht);margin:7px 16px 0;line-height:1.35}small,.klein{color:var(--zacht);font-size:13px}a{color:var(--accent)}b{font-weight:600}button{font:inherit;font-size:17px;font-weight:600;background:var(--accent);color:#fff;border:0;border-radius:var(--rond-knop);padding:11px 18px;cursor:pointer;margin:3px 0;-webkit-tap-highlight-color:transparent}button:active{opacity:.7}button:disabled{opacity:.4;cursor:default}button.tweede{background:var(--knop2);color:var(--accent);font-weight:500}button.link{background:none;color:var(--accent);padding:0 16px;font-weight:400;margin:0}button.rood{background:none;color:var(--fout);font-weight:400;padding:6px 0}input,select,textarea{font:inherit;font-size:17px;color:var(--tekst);background:var(--veld);border:0;border-radius:var(--rond-knop);padding:10px 12px;max-width:100%;outline:0}input:focus,select:focus,textarea:focus{box-shadow:0 0 0 2px var(--accent)}input[type=text],input[type=password],textarea,select{width:100%}input[type=number]{width:5.5em;text-align:center}input[type=range]{width:100%;accent-color:var(--accent);padding:0;background:none}input[type=color]{width:48px;height:36px;padding:2px;vertical-align:middle}textarea{resize:vertical}::placeholder{color:var(--zacht);opacity:.8}input[type=checkbox]{-webkit-appearance:none;appearance:none;flex:none;width:51px;height:31px;border-radius:16px;background:var(--schakel-uit);position:relative;cursor:pointer;margin:0;padding:0;transition:background .2s;vertical-align:middle}input[type=checkbox]:before{content:"";position:absolute;top:2px;left:2px;width:27px;height:27px;border-radius:50%;background:#fff;box-shadow:0 2px 4px rgba(0,0,0,.2);transition:transform .2s}input[type=checkbox]:checked{background:#34c759}input[type=checkbox]:checked:before{transform:translateX(20px)}input[type=checkbox]:focus{box-shadow:none}label{cursor:pointer}label:has(>input[type=checkbox]){display:flex;align-items:center;justify-content:space-between;gap:12px}label>input[type=checkbox]{order:2}.bestand{display:block;color:var(--accent);cursor:pointer;position:relative}.bestand input{position:absolute;width:1px;height:1px;opacity:0;overflow:hidden}.bestand:focus-within{text-decoration:underline}.rg{padding:11px 0;border-bottom:.5px solid var(--rand)}.rg:first-child{padding-top:4px}.rg:last-child{border:0;padding-bottom:4px}.rg small{display:block;margin-top:4px}.rechts{display:flex;align-items:center;justify-content:space-between;gap:12px}.rg input[type=range]{margin:10px 0 2px}details{margin:10px 0}summary{cursor:pointer;color:var(--accent)}#status{font-size:15px;font-weight:500;margin:8px 0 2px}#status:empty{display:none}footer{text-align:center;color:var(--zacht);font-size:12px;padding:16px 16px 28px}.maker{text-align:center;color:var(--zacht);font-size:12px;margin:0;padding:0 16px 24px}
 /* Alleen voor deze pagina; de rest van het uiterlijk staat in huisstijl.css */
-body{padding-bottom:calc(64px + env(safe-area-inset-bottom))}
+body{padding-bottom:env(safe-area-inset-bottom)}
+.kaart{scroll-margin-top:64px}
 .status p{margin:2px 0;font-size:14px;font-weight:600}
 .status p:empty{display:none}
-#tabs{position:fixed;left:0;right:0;bottom:0;z-index:6;display:flex;justify-content:center;background:var(--balk);-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);border-top:.5px solid var(--rand);padding:6px 4px calc(4px + env(safe-area-inset-bottom))}
-#tabs button{flex:1;max-width:160px;background:none;color:var(--zacht);border:0;border-radius:0;padding:2px 0;margin:0;font-size:10.5px;font-weight:500;line-height:1.2}
-#tabs svg{display:block;width:26px;height:26px;margin:0 auto 2px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
-#tabs button.aan{color:var(--accent)}
-body[data-tab=fotos] .kaart:not([data-tab=fotos]),body[data-tab=dias] .kaart:not([data-tab=dias]),body[data-tab=inst] .kaart:not([data-tab=inst]),body[data-tab=beheer] .kaart:not([data-tab=beheer]){display:none}
+/* Snelkoppelingen bovenaan: alles staat op een pagina onder elkaar, een tik springt naar het stuk */
+#tabs{position:sticky;top:0;z-index:6;display:flex;gap:6px;overflow-x:auto;background:var(--balk);-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);border-bottom:.5px solid var(--rand);padding:8px 16px;scrollbar-width:none}
+#tabs::-webkit-scrollbar{display:none}
+#tabs button{flex:none;display:flex;align-items:center;gap:5px;background:var(--kaart);color:var(--tekst);border:0;border-radius:999px;padding:6px 12px;margin:0;font-size:14px;font-weight:500;line-height:1.2}
+#tabs svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+#tabs button.aan{background:var(--accent);color:#fff}
+.groep{font-size:22px;font-weight:700;margin:34px 0 0;scroll-margin-top:60px}
 .kaart:first-child{margin-top:12px}
 /* Nu op het billboard */
 .nurij{display:flex;align-items:center;gap:14px}
@@ -44,10 +47,16 @@ body[data-tab=fotos] .kaart:not([data-tab=fotos]),body[data-tab=dias] .kaart:not
 #knop{width:100%}
 </style></head><body data-tab="fotos">
 <header>
-<p class="naam" id="kop">Billboard</p>
-<h1 id="titel">Foto's</h1>
+<p class="naam">Mini-billboard</p>
+<h1 id="kop">Billboard</h1>
 <div class="status"><p id="bovenstatus"></p><p id="updboven"></p></div>
 </header>
+<nav id="tabs" aria-label="Onderdelen">
+<button data-t="fotos"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 16l5-5 4 4 3-3 6 6"/><circle cx="16" cy="9" r="1.3"/></svg>Foto's</button>
+<button data-t="dias"><svg viewBox="0 0 24 24"><path d="M5 5h14M12 5v15M9 20h6"/></svg>Tekst</button>
+<button data-t="inst"><svg viewBox="0 0 24 24"><path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="17" r="2"/></svg>Instellingen</button>
+<button data-t="beheer"><svg viewBox="0 0 24 24"><path d="M2.5 9a14 14 0 0 1 19 0M5.5 12.5a9.5 9.5 0 0 1 13 0M8.6 16a5 5 0 0 1 6.8 0"/><circle cx="12" cy="19.3" r=".9" fill="currentColor"/></svg>Wifi</button>
+</nav>
 <main>
 <section class="kaart" id="nu" data-tab="fotos">
 <h2>Nu op het billboard</h2>
@@ -73,6 +82,7 @@ body[data-tab=fotos] .kaart:not([data-tab=fotos]),body[data-tab=dias] .kaart:not
 <p class="voet" id="lijstinfo"></p>
 <p class="voet" id="ruimte"></p>
 </section>
+<h2 class="groep" id="groep_dias">Tekst, klok en weer</h2>
 <section class="kaart" id="tekstkaart" data-tab="dias">
 <h2>Tekst toevoegen</h2>
 <div class="blok">
@@ -124,6 +134,7 @@ body[data-tab=fotos] .kaart:not([data-tab=fotos]),body[data-tab=dias] .kaart:not
 <p><button id="qrknop">QR-code-dia toevoegen</button> <span id="qrstatus"></span></p>
 </div>
 </section>
+<h2 class="groep" id="groep_inst">Instellingen</h2>
 <section class="kaart" id="instellingen" data-tab="inst">
 <h2>Beeld en wisselen</h2>
 <div class="blok">
@@ -137,6 +148,9 @@ body[data-tab=fotos] .kaart:not([data-tab=fotos]),body[data-tab=dias] .kaart:not
 <div class="rg"><label>Neonbuis<input type="checkbox" id="neon"></label><small>Het scherm flikkert af en toe even, zoals een oude reclamebuis.</small></div>
 <div class="rg"><label>Meldingen op het scherm<input type="checkbox" id="meld"></label><small>Uit: het billboard laat alleen uw foto's zien, ook meteen bij het aanzetten. Handig op een beurs. Aan: bij het aanzetten kort de naam van de wifi, en meldingen over de thuis-wifi, de klok en nieuwe software.</small></div>
 <div class="rg" id="qrrij"><label>Wifi-code bij aanzetten<input type="checkbox" id="qr"></label><small>Laat bij het aanzetten het wifi-wachtwoord en de wifi-code op het scherm zien. Makkelijk, maar iedereen die het scherm dan ziet, kan verbinden.</small></div>
+<div class="rg" id="uitlijnrij" style="display:none"><div class="rechts"><span>Beeld uitlijnen</span><span id="uitlijnwaarde" class="klein"></span></div>
+<small>Ziet u aan een rand een streepje ruis, of valt er een stukje van het beeld af? Schuif het beeld per pixel. Op het scherm verschijnt een kader: het klopt als er rondom een witte rand staat.</small>
+<p style="display:flex;gap:6px;flex-wrap:wrap;margin:8px 0 0"><button class="tweede" data-sx="-1" data-sy="0">&#9664; Links</button><button class="tweede" data-sx="1" data-sy="0">Rechts &#9654;</button><button class="tweede" data-sx="0" data-sy="-1">&#9650; Omhoog</button><button class="tweede" data-sx="0" data-sy="1">&#9660; Omlaag</button><button class="tweede" data-sx="r" data-sy="r">Terug naar 0</button></p></div>
 <div class="rg"><button id="opslaan" style="width:100%">Instellingen opslaan</button> <span id="inststatus"></span></div>
 </div>
 </section>
@@ -153,6 +167,7 @@ Geef ze hetzelfde groepsnummer (een andere baan naast u kan een ander nummer nem
 <p><small>Werkt alleen als de billboards op hetzelfde wifi-kanaal zitten: allemaal zonder thuis-wifi, of allemaal met dezelfde thuis-wifi.</small></p>
 </div>
 </section>
+<h2 class="groep" id="groep_beheer">Wifi en updates</h2>
 <section class="kaart" id="thuis" data-tab="beheer">
 <h2>Thuis-wifi</h2>
 <div class="blok">
@@ -226,12 +241,7 @@ Op het scherm staat dan "Herstel". Verbind met de pagina en tik op "Alles wissen
 </div>
 </section>
 </main>
-<nav id="tabs" aria-label="Onderdelen">
-<button data-t="fotos"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 16l5-5 4 4 3-3 6 6"/><circle cx="16" cy="9" r="1.3"/></svg>Foto's</button>
-<button data-t="dias"><svg viewBox="0 0 24 24"><path d="M5 5h14M12 5v15M9 20h6"/></svg>Tekst</button>
-<button data-t="inst"><svg viewBox="0 0 24 24"><path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="17" r="2"/></svg>Instellingen</button>
-<button data-t="beheer"><svg viewBox="0 0 24 24"><path d="M2.5 9a14 14 0 0 1 19 0M5.5 12.5a9.5 9.5 0 0 1 13 0M8.6 16a5 5 0 0 1 6.8 0"/><circle cx="12" cy="19.3" r=".9" fill="currentColor"/></svg>Wifi</button>
-</nav>
+
 <footer>Versie <span id="fversie"></span><span id="fgezond"></span></footer>
 <p class="maker">&copy; 2026 Samuel Sap en Kees Sap</p>
 
@@ -575,7 +585,8 @@ document.getElementById('trivision').checked=!!d.trivision;
 document.getElementById('neon').checked=!!d.neon;
 const zs=document.getElementById('zwart');if(document.activeElement!==zs)zs.value=String(d.zwart||0);
 document.getElementById('qr').checked=!!d.qr;
-document.getElementById('meld').checked=!!d.meld;document.getElementById('qrrij').style.display=d.meld?'':'none';
+document.getElementById('meld').checked=!!d.meld;
+if(d.ofx!==undefined){UITLIJN={x:d.ofx,y:d.ofy};document.getElementById('uitlijnrij').style.display='';document.getElementById('uitlijnwaarde').textContent=(d.ofx||d.ofy)?('links-rechts '+d.ofx+', boven-onder '+d.ofy):'niet verschoven';}document.getElementById('qrrij').style.display=d.meld?'':'none';
 if(!lichtBezig&&d.licht){licht.value=d.licht;document.getElementById('lichtwaarde').textContent=d.licht+'%';}
 const ni=document.getElementById('naam');if(document.activeElement!==ni)ni.value=d.naam;
 document.getElementById('updtekst').style.display=d.updAan?'':'none';
@@ -702,10 +713,15 @@ if(NU_PAD!==d.nu){NU_PAD=d.nu;const n=duimpje(d.fotos[i],true);n.id='nubeeld';be
 }
 // Elke 8 seconden kijken wat er op het scherm staat (alleen het blok bovenaan, niet de hele lijst)
 setInterval(async()=>{
-if(document.hidden||document.body.dataset.tab!=='fotos'||updWacht!==null||!LAATST)return;
+if(document.hidden||document.getElementById('nu').getBoundingClientRect().bottom<0||updWacht!==null||!LAATST)return;
 try{const d=await (await fetch('/lijst',{cache:'no-store'})).json();LAATST.nu=d.nu;toonNu(d);}catch(e){}
 },8000);
 document.getElementById('wijzigknop').onclick=()=>{WIJZIG=!WIJZIG;document.getElementById('wijzigknop').textContent=WIJZIG?'Klaar':'Wijzig';document.getElementById('lijst').classList.toggle('wijzig',WIJZIG);};
+let UITLIJN={x:0,y:0};
+document.querySelectorAll('#uitlijnrij button').forEach(k=>k.onclick=async()=>{
+const n=k.dataset.sx==='r'?{x:0,y:0}:{x:Math.max(-6,Math.min(6,UITLIJN.x+Number(k.dataset.sx))),y:Math.max(-6,Math.min(6,UITLIJN.y+Number(k.dataset.sy)))};
+try{const r=await fetch('/uitlijnen?x='+n.x+'&y='+n.y,{method:'POST'});if(r.ok){UITLIJN=n;document.getElementById('uitlijnwaarde').textContent=(n.x||n.y)?('links-rechts '+n.x+', boven-onder '+n.y):'niet verschoven';}}catch(e){document.getElementById('uitlijnwaarde').textContent=nl(e);}
+});
 document.getElementById('meld').onchange=e=>{document.getElementById('qrrij').style.display=e.target.checked?'':'none';};
 function zonderAccenten(t){return t.normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[\u2018\u2019]/g,"'").replace(/[\u201c\u201d]/g,'"').replace(/\u20ac/g,'EUR');}
 function tekstKleuren(){
@@ -923,22 +939,23 @@ document.getElementById('kies').onchange=toonGekozen;
 document.getElementById('fw').onchange=e=>{const f=e.target.files[0];document.getElementById('fwnaam').textContent=f?'Gekozen: '+f.name:'Nog geen bestand gekozen';};
 // Tabbladen onderaan. Een link naar een onderdeel (bijvoorbeeld #thuis) opent vanzelf het goede tabblad.
 const TABKOP={fotos:"Foto's",dias:'Tekst, klok en weer',inst:'Instellingen',beheer:'Wifi en updates'};
+function markeer(t){document.querySelectorAll('#tabs button').forEach(b=>{b.classList.toggle('aan',b.dataset.t==t);b.setAttribute('aria-current',b.dataset.t==t?'true':'false');});}
 function toonTab(t,id){
 if(!TABKOP[t])t='fotos';
-document.body.dataset.tab=t;
-document.querySelectorAll('#tabs button').forEach(b=>{b.classList.toggle('aan',b.dataset.t==t);b.setAttribute('aria-current',b.dataset.t==t?'page':'false');});
-document.getElementById('titel').textContent=TABKOP[t];
-const el=id&&document.getElementById(id);
-if(el)el.scrollIntoView();else scrollTo(0,0);
+markeer(t);
+const el=(id&&document.getElementById(id))||(t=='fotos'?null:document.getElementById('groep_'+t));
+if(el)el.scrollIntoView({behavior:'smooth'});else scrollTo({top:0,behavior:'smooth'});
 }
 function tabUitHash(){
-const h=location.hash.slice(1);if(!h)return toonTab('fotos');
+const h=location.hash.slice(1);if(!h)return markeer('fotos');
 if(TABKOP[h])return toonTab(h);
 const el=document.getElementById(h),k=el&&el.closest('.kaart');
 if(k)toonTab(k.dataset.tab,h);
 }
 document.querySelectorAll('#tabs button').forEach(b=>b.onclick=()=>{history.replaceState(null,'','#'+b.dataset.t);toonTab(b.dataset.t);});
 addEventListener('hashchange',tabUitHash);
+// Tijdens het scrollen: de snelkoppeling van het stuk dat bovenaan staat oplichten
+addEventListener('scroll',()=>{let t='fotos';for(const g of ['dias','inst','beheer']){const k=document.getElementById('groep_'+g);if(k&&k.getBoundingClientRect().top<120)t=g;}markeer(t);},{passive:true});
 tabUitHash();
 document.getElementById('knop').onclick=upload;
 document.getElementById('opslaan').onclick=opslaan;
