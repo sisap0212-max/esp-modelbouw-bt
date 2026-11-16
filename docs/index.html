@@ -38,13 +38,21 @@ p{margin:8px 0}
 ul{margin:0;padding-left:20px}ul li{margin:6px 0}
 details .blok{margin-top:8px}
 summary{cursor:pointer;color:var(--accent);margin:0 16px}
-#bblijst button{display:flex;align-items:center;gap:12px;width:100%;background:none;border:0;border-bottom:.5px solid var(--rand);padding:12px 16px 12px 0;font:inherit;color:var(--tekst);text-align:left;cursor:pointer}
+#lijstblok{position:fixed;inset:0;z-index:20;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;padding:16px}
+.venster{background:var(--kaart);border-radius:14px;width:100%;max-width:440px;padding:18px;box-shadow:0 10px 40px rgba(0,0,0,.35)}
+.vkop{font-size:19px;font-weight:600;margin:0 0 12px}
+#bblijst{border:1px solid var(--rand);border-radius:8px;min-height:150px;max-height:50vh;overflow-y:auto}
+#bblijst button{display:flex;align-items:center;gap:10px;width:100%;background:none;border:0;border-bottom:.5px solid var(--rand);border-radius:0;margin:0;padding:12px 14px;font:inherit;font-size:16px;color:var(--tekst);text-align:left;cursor:pointer}
 #bblijst button:last-child{border-bottom:0}
+#bblijst button.gekozen{background:var(--knop2)}
 #bblijst button:disabled{opacity:.45;cursor:default}
 #bblijst .stip{flex:none;width:10px;height:10px;border-radius:50%;background:#34c759}
 #bblijst button:disabled .stip{background:var(--zacht)}
 #bblijst .tx{flex:1;min-width:0}#bblijst .tx small{margin:0}
-#bblijst .pijl{color:var(--zacht);font-size:20px}
+.vstatus{font-size:13px;color:var(--zacht);margin:10px 2px 0}
+.vknoppen{display:flex;gap:10px;justify-content:flex-end;margin-top:14px}
+.vknoppen .knop{width:auto;margin:0;padding:10px 22px}
+.knop:disabled{opacity:.45;cursor:default}
 footer{text-align:center;color:var(--zacht);font-size:12px;padding:24px 16px 32px}
 </style></head><body>
 <header><p class="naam">Mini-billboard</p><h1>Verbinden</h1></header>
@@ -66,11 +74,15 @@ footer{text-align:center;color:var(--zacht);font-size:12px;padding:24px 16px 32p
 <li><div>Tik hieronder op <b>Verbinden</b> en tik op <b>Toestaan</b> als de browser het vraagt.<small>U krijgt een lijst met de billboards die de site vindt. Tik op het billboard dat u wilt bedienen.</small></div></li>
 </ol></div>
 <button class="knop" id="verbind">Verbinden</button>
-<div id="lijstblok" style="display:none;margin-top:18px">
-<h2>Kies uw billboard</h2>
-<div class="blok" id="bblijst" style="padding:0 0 0 16px"></div>
-</div>
 <p id="zoekst" class="voet"></p>
+<!-- Venster om een billboard te kiezen (zoals Chrome dat doet bij USB en Bluetooth) -->
+<div id="lijstblok" role="dialog" aria-modal="true" aria-labelledby="kieskop" style="display:none">
+<div class="venster">
+<p class="vkop" id="kieskop">Met welk billboard wilt u verbinden?</p>
+<div id="bblijst"></div>
+<p class="vstatus" id="vstatus">Zoeken...</p>
+<div class="vknoppen"><button class="knop tweede" id="annuleer">Annuleren</button><button class="knop" id="kiesknop" disabled>Verbinden</button></div>
+</div></div>
 <div id="handblok" style="display:none">
 <div class="blok" style="margin-top:12px">
 <p>Billboard niet gevonden? Vul het adres in dat op het scherm van het billboard staat, bijvoorbeeld <b>192.168.1.37</b>.</p>
@@ -163,7 +175,9 @@ const l=bekend().filter(x=>x.naam!==d.naam);
 l.unshift({naam:d.naam,adres:adres,thuis:d.thuisip?'http://'+d.thuisip:''});
 zet('bb_lijst',JSON.stringify(l.slice(0,10)));
 }
-let WEG=false;
+let WEG=false,GEKOZEN=null;
+function kies(k,adres,d){document.querySelectorAll('#bblijst button').forEach(b=>b.classList.toggle('gekozen',b===k));GEKOZEN={adres,d};document.getElementById('kiesknop').disabled=false;}
+function sluit(){WEG=true;document.getElementById('lijstblok').style.display='none';const v=document.getElementById('verbind');v.disabled=false;v.textContent='Verbinden';}
 function ga(adres,d){
 WEG=true;onthoud(adres,d);zet('bb_adres',adres);
 location.href=d.modus==='instellen'?'instellen.html':d.modus==='herstel'?'herstel.html':'bedienen.html';
@@ -173,23 +187,25 @@ const RIJEN=new Map();
 function rij(naam,adres,d,uitleg){
 const lijst=document.getElementById('bblijst');
 let k=RIJEN.get(naam);
-if(!k){k=document.createElement('button');k.innerHTML='<span class="stip"></span><span class="tx"><b></b><small></small></span><span class="pijl">›</span>';RIJEN.set(naam,k);lijst.append(k);}
+if(!k){k=document.createElement('button');k.innerHTML='<span class="stip"></span><span class="tx"><b></b><small></small></span>';RIJEN.set(naam,k);lijst.append(k);}
 if(k.dataset.ok&&!d)return;          // al gevonden: niet terug naar grijs
 k.querySelector('b').textContent=naam;
 const plek=adres.replace('http://','');
 k.querySelector('small').textContent=d?(d.modus==='instellen'?'Nieuw: nog instellen · ':'')+(plek==='192.168.4.1'?'via de wifi van het billboard':'via uw wifi ('+plek+')'):uitleg;
 k.disabled=!d;
-if(d){k.dataset.ok=1;k.onclick=()=>ga(adres,d);lijst.prepend(k);}
-document.getElementById('lijstblok').style.display='';
+if(d){k.dataset.ok=1;k.onclick=()=>kies(k,adres,d);k.ondblclick=()=>ga(adres,d);lijst.prepend(k);}
 }
 // Veel adressen tegelijk proberen, met een kleine wachttijd per adres
 async function scan(adressen,bijElk){
 let i=0;const N=adressen.length;
-async function werker(){while(i<N&&!WEG){const a=adressen[i++];const d=await probeer(a,1500);if(d)bijElk(a,d);if(i%40===0)st.textContent='Zoeken op uw wifi... '+Math.min(100,Math.round(i*100/N))+'%';}}
+async function werker(){while(i<N&&!WEG){const a=adressen[i++];const d=await probeer(a,1500);if(d)bijElk(a,d);if(i%40===0)document.getElementById('vstatus').textContent='Zoeken op uw wifi... '+Math.min(100,Math.round(i*100/N))+'%';}}
 await Promise.all(Array.from({length:48},werker));
 }
 async function zoek(){
-const knop=document.getElementById('verbind');knop.disabled=true;WEG=false;
+const knop=document.getElementById('verbind');knop.disabled=true;WEG=false;GEKOZEN=null;
+document.getElementById('kiesknop').disabled=true;
+document.getElementById('lijstblok').style.display='';
+const vst=document.getElementById('vstatus');
 let toestemming='';
 for(const n of ['local-network-access','local-network']){try{toestemming=(await navigator.permissions.query({name:n})).state;break;}catch(e){}}
 let gevonden=0;
@@ -198,7 +214,7 @@ const vond=(a,d)=>{gevonden++;rij(d.naam,a,d);};
 const oud=bekend();
 for(const b of oud)rij(b.naam,b.adres,null,'zoeken...');
 const plekken=[...new Set([...oud.flatMap(b=>[b.thuis,b.adres]),lees('bb_adres'),lees('bb_thuis'),'http://'+host(veld.value)+'.local','http://192.168.4.1'].filter(Boolean))];
-st.textContent='Zoeken...';
+vst.textContent='Zoeken...';
 // De eerste keer wacht de browser op uw "Toestaan": dat ene adres langer laten proberen
 if(toestemming!=='granted'){const a=plekken.shift();const d=await probeer(a,30000);if(d)vond(a,d);}
 await Promise.all(plekken.map(async a=>{const d=await probeer(a,4000);if(d)vond(a,d);}));
@@ -209,10 +225,13 @@ const adressen=[];for(const n of netten)for(let x=1;x<255;x++){const a='http://'
 if(!WEG)await scan(adressen,vond);
 if(WEG)return;
 for(const [naam,k] of RIJEN)if(!k.dataset.ok)k.querySelector('small').textContent='niet gevonden: staat hij aan?';
-st.textContent=gevonden?'Tik op het billboard dat u wilt bedienen.':'Geen billboard gevonden. Staat het aan, en zit uw telefoon op dezelfde wifi?';
-document.getElementById('handblok').style.display='';knop.disabled=false;knop.textContent='Opnieuw zoeken';
+vst.textContent=gevonden?'Klaar met zoeken. Kies uw billboard en tik op Verbinden.':'Geen billboard gevonden.';
+if(!gevonden){st.textContent='Geen billboard gevonden. Staat het aan, en zit uw telefoon op dezelfde wifi?';document.getElementById('handblok').style.display='';sluit();}
 }
 document.getElementById('verbind').onclick=zoek;
+document.getElementById('annuleer').onclick=()=>{sluit();document.getElementById('handblok').style.display='';};
+document.getElementById('kiesknop').onclick=()=>{if(GEKOZEN)ga(GEKOZEN.adres,GEKOZEN.d);};
+document.getElementById('lijstblok').onclick=e=>{if(e.target.id==='lijstblok')document.getElementById('annuleer').click();};
 document.getElementById('handknop').onclick=async()=>{
 let a=document.getElementById('handadres').value.trim().replace(/\/+$/,'');
 if(!a)return;if(!/^https?:\/\//.test(a))a='http://'+a;
